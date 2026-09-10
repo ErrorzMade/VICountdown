@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Countdown to the release of Grand Theft Auto VI on Thursday 19 November 2026, unlocking at midnight local time in every region.">
+<title>Countdown to Vice City</title>
+<link rel="icon" href="assets/favicon.png" type="image/png">
+<link rel="preload" as="image" href="assets/logo.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&amp;family=Anton&amp;display=swap">
+<style>
+/* Pricedown is the real GTA wordmark face. Local-only source: if it's
+   installed the countdown uses it, otherwise it falls through to Anton.
+   No network request either way. */
+@font-face{
+  font-family:'Pricedown';
+  src:local('Pricedown Bl'), local('Pricedown Black'), local('Pricedown'), local('pricedown bl');
+  font-display:swap;
+}
+
+:root{
+  --black:#08080A;
+  --deep:#0C0B10;
+  --white:#FFFFFF;
+  --pink:#FF2DAA;
+  --grey:#A7A2B0;
+  --dim:#6B6675;
+  --line:rgba(255,255,255,.13);
+  --line-2:rgba(255,255,255,.07);
+  --ui:'Archivo',"Segoe UI",system-ui,-apple-system,sans-serif;
+  --timer:'Pricedown','Anton',"Haettenschweiler",'Archivo',sans-serif;
+  --gut:clamp(20px,5vw,68px);
+  --max:1280px;
+
+  /* sampled off the trailer's "NOVEMBER 19, 2026" card: white core,
+     magenta halo, purple falloff, a faint warm fringe */
+  --neon:
+    0 0 1px   rgba(255,255,255,.85),
+    0 0 13px  rgba(255, 45,170,.90),
+    0 0 30px  rgba(198, 42,198,.50),
+    0 0 64px  rgba(150, 40,190,.24);
+  --neon-soft:
+    0 0 1px   rgba(255,255,255,.9),
+    0 0 10px  rgba(255, 45,170,.55),
+    0 0 26px  rgba(170, 42,198,.28);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--black);color:var(--white);
+  font-family:var(--ui);font-size:16px;line-height:1.6;
+  overflow-x:hidden;-webkit-font-smoothing:antialiased;
+}
+::selection{background:var(--pink);color:#fff}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:2px solid var(--pink);outline-offset:3px}
+h1,h2,h3,figure,p{margin:0}
+h1,h2,h3{text-wrap:balance}
+img{max-width:100%}
+
+/* ============ HERO ============ */
+.stage{
+  position:relative;overflow:hidden;
+  background:#0A0910 url('assets/hero-poster.jpg') center/cover no-repeat;
+}
+.bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none}
+.veil{
+  position:absolute;inset:0;
+  background:
+    linear-gradient(180deg,rgba(6,6,9,.58) 0%,rgba(6,6,9,.14) 20%,rgba(6,6,9,.30) 48%,rgba(6,6,9,.66) 70%,rgba(6,6,9,.88) 90%,var(--black) 100%),
+    radial-gradient(84% 66% at 50% 42%,transparent 40%,rgba(6,6,9,.50) 100%);
+}
+.stage-in{
+  position:relative;z-index:2;
+  padding:clamp(54px,10vw,120px) var(--gut) clamp(56px,8vw,104px);
+}
+.inner{max-width:var(--max);margin:0 auto}
+
+.lockup{display:block;text-align:center}
+.mark{
+  display:block;width:min(580px,72vw);height:auto;margin:0 auto;
+  /* Centre the ink, not the bounding box. The mark's extents are symmetric but
+     its mass sits +8.9% right (the V is a thin taper, the I plus wordmark are
+     solid), so box-centring reads as off-centre. This is the measured
+     centroid, so this is deliberate. */
+  transform:translateX(-8.9%);
+  filter:drop-shadow(0 10px 44px rgba(0,0,0,.72));
+}
+
+.street{
+  margin:clamp(30px,4.5vw,52px) 0 0;text-align:center;
+  font-size:clamp(14px,2vw,23px);font-weight:700;
+  letter-spacing:.3em;text-transform:uppercase;
+  text-shadow:var(--neon-soft);
+}
+
+/* ============ COUNTDOWN ============ */
+.clock{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  max-width:1040px;margin:clamp(30px,4.5vw,54px) auto 0;
+  gap:clamp(4px,1.5vw,22px);
+}
+.seg{text-align:center;min-width:0}
+.seg .n{
+  display:block;font-family:var(--timer);font-weight:400;
+  font-size:clamp(56px,11.5vw,146px);line-height:.84;letter-spacing:.02em;
+  color:var(--white);text-shadow:var(--neon);
+}
+.seg .l{
+  display:block;margin-top:clamp(10px,1.4vw,16px);
+  font-size:clamp(9px,1.05vw,11px);font-weight:700;
+  letter-spacing:.34em;text-transform:uppercase;color:var(--grey);
+}
+.seg.beat .n{animation:beat .4s ease-out}
+@keyframes beat{0%{opacity:.65}100%{opacity:1}}
+
+.opened{
+  display:none;max-width:1040px;margin:22px auto 0;text-align:center;
+  font-size:clamp(13px,1.8vw,18px);font-weight:700;letter-spacing:.28em;text-transform:uppercase;
+  text-shadow:var(--neon-soft);
+}
+body.launched .opened{display:block}
+
+/* ============ SECTIONS ============ */
+.sec{padding:clamp(56px,8vw,112px) var(--gut) 0}
+.sec-head{
+  max-width:var(--max);margin:0 auto clamp(24px,3.4vw,40px);
+  display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:22px 44px;
+}
+.sec-text{flex:1 1 420px}
+.sec-head h2{font-size:clamp(24px,4vw,42px);font-weight:800;letter-spacing:.06em;text-transform:uppercase;line-height:1.04}
+.sec-head p{max-width:56ch;margin-top:10px;font-size:14px;line-height:1.7;color:var(--grey)}
+
+.tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.sel{position:relative;min-width:290px}
+.sel label{
+  position:absolute;top:-7px;left:14px;z-index:1;background:var(--black);padding:0 7px;
+  font-size:9px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:var(--pink);
+}
+select{
+  width:100%;appearance:none;background:rgba(16,14,22,.92);color:var(--white);
+  border:1px solid var(--line);border-radius:2px;padding:14px 42px 14px 15px;
+  font-family:var(--ui);font-size:14px;font-weight:500;cursor:pointer;
+}
+select:hover{border-color:rgba(255,45,170,.4)}
+.sel .caret{position:absolute;right:15px;top:50%;transform:translateY(-50%);color:var(--pink);pointer-events:none;font-size:9px}
+.btn{
+  display:inline-flex;align-items:center;background:transparent;color:var(--grey);
+  border:1px solid var(--line);border-radius:2px;padding:14px 18px;cursor:pointer;
+  font-family:var(--ui);font-size:10.5px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;
+  transition:border-color .18s,color .18s;
+}
+.btn:hover{border-color:rgba(255,45,170,.45);color:var(--white)}
+.btn[hidden]{display:none}
+
+/* board */
+.scroll{max-width:var(--max);margin:0 auto;overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:760px;font-variant-numeric:tabular-nums}
+thead th{
+  text-align:left;padding:0 16px 12px;white-space:nowrap;border-bottom:1px solid var(--line);
+  font-size:10px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:var(--dim);
+}
+th.r,td.r{text-align:right}
+tbody tr{border-bottom:1px solid var(--line-2)}
+tbody tr:hover{background:rgba(255,255,255,.03)}
+tbody tr.you{background:rgba(255,45,170,.09);box-shadow:inset 2px 0 0 var(--pink)}
+tbody tr.gone td{opacity:.5}
+tbody tr.gone{box-shadow:inset 2px 0 0 rgba(255,255,255,.35)}
+td{padding:15px 16px;font-size:14px;white-space:nowrap;color:var(--grey);vertical-align:top}
+td.off{font-weight:700;color:var(--white)}
+td.who{white-space:normal;color:var(--white);font-weight:500;line-height:1.5;min-width:260px}
+td.who .me{color:var(--pink);font-weight:700}
+td.who .n{color:var(--dim);font-weight:400}
+td.rem{font-weight:700;color:var(--white);font-size:15px}
+.pill{display:inline-block;padding:4px 10px;border-radius:2px;border:1px solid currentColor;font-size:9.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase}
+.pill.w{color:var(--dim)}
+.pill.f{color:#E8E4EE}
+.pill.s{color:var(--pink)}
+.pill.o{color:var(--pink);background:rgba(255,45,170,.14)}
+
+/* postcards */
+/* 320px lands 3 columns at the 1280 max-width and 2 on a tablet, without
+   tipping to 4 on desktop and leaving a ragged last row of two. */
+.cards{max-width:var(--max);margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(320px,100%),1fr));gap:14px}
+.card{position:relative;overflow:hidden;border-radius:3px;border:1px solid var(--line);aspect-ratio:16/9;background:var(--deep)}
+.card img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .7s cubic-bezier(.2,.6,.2,1)}
+.card:hover img{transform:scale(1.05)}
+
+/* footer */
+footer{margin-top:clamp(56px,9vw,112px);border-top:1px solid var(--line);padding:clamp(32px,5vw,54px) var(--gut) 60px}
+.foot{max-width:var(--max);margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px 48px}
+.foot h3{font-size:10px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:var(--dim);margin-bottom:9px}
+.foot p,.foot li{font-size:12.5px;line-height:1.75;color:var(--dim)}
+.foot ul{list-style:none;padding:0;margin:0}
+.foot a{color:var(--grey);border-bottom:1px solid var(--line)}
+.foot a:hover{color:var(--pink)}
+.foot code{font-family:ui-monospace,Consolas,monospace;font-size:12px;color:var(--grey)}
+
+/* Sources > Music: expands into the confirmed tracklist */
+.srcmenu summary{
+  display:inline-block;cursor:pointer;list-style:none;
+  color:var(--grey);border-bottom:1px solid var(--line);
+}
+.srcmenu summary::-webkit-details-marker{display:none}
+.srcmenu summary::marker{content:''}
+.srcmenu summary::after{content:' \25BE';color:var(--dim)}
+.srcmenu[open] summary::after{content:' \25B4'}
+.srcmenu summary:hover{color:var(--pink);border-color:rgba(255,45,170,.45)}
+.mtracks{
+  margin:11px 0 4px;max-height:240px;overflow-y:auto;overscroll-behavior:contain;
+  border-left:1px solid var(--line-2);padding-left:12px;
+}
+.mtracks li{margin-bottom:6px;line-height:1.45}
+.mtracks a{display:block;border-bottom:0;color:var(--grey);font-size:12px}
+.mtracks a:hover{color:var(--pink)}
+.mtracks a b{font-weight:600;color:#8F8A99}
+.mtracks a:hover b{color:var(--pink)}
+.mtracks .yr{color:var(--dim)}
+
+/* ============ RADIO LEONIDA ============ */
+.radio{
+  position:fixed;right:22px;bottom:22px;z-index:70;
+  width:min(370px,calc(100vw - 32px));
+  background:rgba(10,9,14,.93);backdrop-filter:blur(20px);
+  border:1px solid var(--line);border-radius:4px;
+  box-shadow:0 22px 64px rgba(0,0,0,.62);
+  overflow:hidden;
+}
+.radio-head{
+  display:flex;align-items:center;gap:11px;width:100%;
+  padding:12px 14px;background:none;border:0;cursor:pointer;
+  font-family:var(--ui);color:var(--white);text-align:left;
+}
+.radio-head:hover{background:rgba(255,255,255,.04)}
+.radio.open .radio-head{border-bottom:1px solid var(--line-2)}
+.eq{display:flex;gap:2px;align-items:flex-end;height:14px;flex:none}
+.eq i{width:2.5px;height:26%;background:var(--dim);border-radius:1px}
+.radio.playing .eq i{background:var(--pink);box-shadow:0 0 7px rgba(255,45,170,.85);animation:eq .85s ease-in-out infinite}
+.radio.playing .eq i:nth-child(2){animation-delay:-.28s}
+.radio.playing .eq i:nth-child(3){animation-delay:-.52s}
+.radio.playing .eq i:nth-child(4){animation-delay:-.16s}
+@keyframes eq{0%,100%{height:22%}50%{height:100%}}
+.radio-id{flex:1;min-width:0}
+.radio-id b{display:block;font-size:11px;font-weight:800;letter-spacing:.24em;text-transform:uppercase}
+.radio-id span{
+  display:block;font-size:11.5px;color:var(--grey);margin-top:2px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.radio-id span:empty{display:none}
+.radio-chev{color:var(--dim);font-size:9px;flex:none;transition:transform .22s}
+.radio.open .radio-chev{transform:rotate(180deg)}
+
+.radio-body{display:none}
+.radio.open .radio-body{display:block}
+
+.radio-ctl{display:flex;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid var(--line-2)}
+.rbtn{
+  display:grid;place-items:center;width:34px;height:34px;flex:none;
+  background:transparent;border:1px solid var(--line);border-radius:50%;
+  color:var(--white);cursor:pointer;font-size:11px;line-height:1;
+  transition:border-color .16s,background .16s;
+}
+.rbtn:hover{border-color:rgba(255,45,170,.5);background:rgba(255,45,170,.1)}
+.rbtn.main{width:42px;height:42px;font-size:13px;border-color:rgba(255,45,170,.55);background:rgba(255,45,170,.12)}
+.rbtn.on{background:var(--pink);border-color:var(--pink);color:#12030C}
+.vol{flex:1;min-width:60px;appearance:none;height:3px;border-radius:2px;background:rgba(255,255,255,.16);cursor:pointer}
+.vol::-webkit-slider-thumb{appearance:none;width:12px;height:12px;border-radius:50%;background:var(--pink);cursor:pointer}
+.vol::-moz-range-thumb{width:12px;height:12px;border:0;border-radius:50%;background:var(--pink);cursor:pointer}
+
+.radio-list{max-height:290px;overflow-y:auto;overscroll-behavior:contain}
+.radio-list h4{
+  position:sticky;top:0;background:rgba(10,9,14,.97);margin:0;
+  padding:11px 14px 6px;font-size:9px;font-weight:800;
+  letter-spacing:.24em;text-transform:uppercase;color:var(--dim);
+}
+.trk{
+  display:flex;align-items:baseline;gap:9px;width:100%;
+  padding:8px 14px;background:none;border:0;cursor:pointer;
+  font-family:var(--ui);text-align:left;color:var(--grey);font-size:12.5px;line-height:1.35;
+}
+.trk:hover{background:rgba(255,255,255,.05);color:var(--white)}
+.trk .ti{flex:1;min-width:0}
+.trk .ti b{display:block;font-weight:600;color:var(--white)}
+.trk .ti span{display:block;font-size:11px;color:var(--dim)}
+.trk .yr{font-size:10.5px;color:var(--dim);flex:none;font-variant-numeric:tabular-nums}
+.trk[aria-current="true"]{background:rgba(255,45,170,.11)}
+.trk[aria-current="true"] .ti b{color:var(--pink)}
+.trk.missing{opacity:.42}
+
+
+@media (max-width:560px){
+  .clock{grid-template-columns:repeat(2,1fr);gap:26px 10px}
+  .sel{min-width:0;flex:1 1 220px}
+  .radio{right:12px;left:12px;bottom:12px;width:auto}
+  .radio-list{max-height:210px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+  html{scroll-behavior:auto}
+  .bg{display:none}          /* the poster still shows through .stage */
+}
+</style>
+</head>
+<body>
+
+<section class="stage">
+  <video class="bg" autoplay muted loop playsinline preload="auto"
+         poster="assets/hero-poster.jpg" data-src="assets/hero.mp4"
+         aria-hidden="true" tabindex="-1"></video>
+  <div class="veil" aria-hidden="true"></div>
+
+  <div class="stage-in"><div class="inner">
+
+    <div class="lockup">
+      <picture>
+        <source srcset="assets/logo.webp" type="image/webp">
+        <img class="mark" src="assets/logo.png" alt="Grand Theft Auto VI" width="1080" height="836">
+      </picture>
+    </div>
+
+    <p class="street">Thursday, November 19, 2026</p>
+
+    <div class="clock">
+      <div class="seg" id="s-d"><span class="n" id="v-d">00</span><span class="l">Days</span></div>
+      <div class="seg" id="s-h"><span class="n" id="v-h">00</span><span class="l">Hours</span></div>
+      <div class="seg" id="s-m"><span class="n" id="v-m">00</span><span class="l">Minutes</span></div>
+      <div class="seg" id="s-s"><span class="n" id="v-s">00</span><span class="l">Seconds</span></div>
+    </div>
+
+    <p class="opened">Vice City is open</p>
+
+  </div></div>
+</section>
+
+<section class="sec" id="board">
+  <div class="sec-head">
+    <div class="sec-text">
+      <h2>Launch waves</h2>
+      <p>Every region unlocks at midnight on Thursday 19 November in <em>its own</em> time, so the world gets it in waves. Regions that share a moment share a line: Berlin, Paris, Madrid and Stockholm all turn the key at the same second. The UTC column shows that moment on one shared clock, which is why anything east of Greenwich reads Wednesday.</p>
+    </div>
+    <div class="tools">
+      <div class="sel">
+        <label for="region">Your region</label>
+        <select id="region"></select>
+        <span class="caret">&#9660;</span>
+      </div>
+      <button class="btn" id="auto" type="button" hidden>Use my location</button>
+    </div>
+  </div>
+  <div class="scroll">
+    <table>
+      <thead><tr>
+        <th>Offset at launch</th><th>Regions</th><th>Unlocks (UTC)</th><th class="r">Time remaining</th><th class="r">Status</th>
+      </tr></thead>
+      <tbody id="feed"></tbody>
+    </table>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="sec-head">
+    <div class="sec-text">
+      <h2>The state of Leonida</h2>
+      <p>Six destinations, from the neon of Vice City to the swamps of Grassrivers.</p>
+    </div>
+  </div>
+  <div class="cards">
+    <figure class="card"><img src="assets/postcards/vice_city.jpg" alt="Vice City" loading="lazy"></figure>
+    <figure class="card"><img src="assets/postcards/leonida_keys.jpg" alt="Leonida Keys" loading="lazy"></figure>
+    <figure class="card"><img src="assets/postcards/port_gellhorn.jpg" alt="Port Gellhorn" loading="lazy"></figure>
+    <figure class="card"><img src="assets/postcards/ambrosia.jpg" alt="Ambrosia" loading="lazy"></figure>
+    <figure class="card"><img src="assets/postcards/grassrivers.jpg" alt="Grassrivers" loading="lazy"></figure>
+    <figure class="card"><img src="assets/postcards/mount_kalaga_national_park.jpg" alt="Mount Kalaga National Park" loading="lazy"></figure>
+  </div>
+</section>
+
+<footer>
+  <div class="foot">
+    <div>
+      <h3>About</h3>
+      <p>An unofficial fan countdown. Not affiliated with, endorsed by or connected to Rockstar Games or Take-Two Interactive. All artwork, footage and logos are their property, taken from the publicly released media pack.</p>
+      <p style="margin-top:10px">The music is owned by its respective artists and labels. I don't own any of it.</p>
+    </div>
+    <div>
+      <h3>Sources</h3>
+      <ul>
+        <li><a href="https://www.rockstargames.com/newswire/article/ak3ak31a49a221/grand-theft-auto-vi-is-now-set-to-launch-november-19-2026" target="_blank" rel="noopener">Rockstar Newswire: release date</a></li>
+        <li><a href="https://www.rockstargames.com/VI/media/artwork-wallpapers" target="_blank" rel="noopener">Official artwork &amp; wallpapers</a></li>
+        <li>
+          <details class="srcmenu">
+            <summary>Music: <span id="musicCount">0</span> confirmed tracks</summary>
+            <ul class="mtracks" id="musicList"></ul>
+          </details>
+        </li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<aside class="radio" id="radio">
+  <button class="radio-head" id="radioToggle" type="button" aria-expanded="false" aria-controls="radioBody">
+    <span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+    <span class="radio-id">
+      <b>Radio Leonida</b>
+      <span id="nowPlaying"></span>
+    </span>
+    <span class="radio-chev" aria-hidden="true">&#9650;</span>
+  </button>
+
+  <div class="radio-body" id="radioBody">
+    <div class="radio-ctl">
+      <button class="rbtn" id="rPrev" type="button" title="Previous" aria-label="Previous track">&#9198;</button>
+      <button class="rbtn main" id="rPlay" type="button" title="Play" aria-label="Play">&#9654;</button>
+      <button class="rbtn" id="rNext" type="button" title="Next" aria-label="Next track">&#9197;</button>
+      <button class="rbtn" id="rShuf" type="button" title="Shuffle" aria-label="Shuffle" aria-pressed="false">&#8644;</button>
+      <input class="vol" id="rVol" type="range" min="0" max="1" step="0.01" value="0.7" aria-label="Volume">
+    </div>
+    <div class="radio-list" id="radioList"></div>
+  </div>
+  <audio id="radioAudio" preload="none"></audio>
+</aside>
+
+<script>
+/* ==================================================================
+   RELEASE: Thursday 19 November 2026, per Rockstar Newswire.
+   Unlock is 00:00 *local* time, so this is a wall-clock target,
+   not one global instant. Change these five numbers if it moves.
+   ================================================================== */
+var RELEASE = { y: 2026, m: 11, d: 19, h: 0, mi: 0 };
+
+var REGIONS = [
+  { tz:'Pacific/Auckland',    city:'Auckland',     sub:'New Zealand' },
+  { tz:'Australia/Sydney',    city:'Sydney',       sub:'Australia' },
+  { tz:'Australia/Brisbane',  city:'Brisbane',     sub:'Australia' },
+  { tz:'Australia/Perth',     city:'Perth',        sub:'Australia' },
+  { tz:'Asia/Tokyo',          city:'Tokyo',        sub:'Japan' },
+  { tz:'Asia/Seoul',          city:'Seoul',        sub:'South Korea' },
+  { tz:'Asia/Shanghai',       city:'Shanghai',     sub:'China' },
+  { tz:'Asia/Hong_Kong',      city:'Hong Kong',    sub:'Hong Kong SAR' },
+  { tz:'Asia/Manila',         city:'Manila',       sub:'Philippines' },
+  { tz:'Asia/Singapore',      city:'Singapore',    sub:'Singapore' },
+  { tz:'Asia/Bangkok',        city:'Bangkok',      sub:'Thailand' },
+  { tz:'Asia/Jakarta',        city:'Jakarta',      sub:'Indonesia' },
+  { tz:'Asia/Kolkata',        city:'Mumbai',       sub:'India' },
+  { tz:'Asia/Karachi',        city:'Karachi',      sub:'Pakistan' },
+  { tz:'Asia/Dubai',          city:'Dubai',        sub:'United Arab Emirates' },
+  { tz:'Europe/Moscow',       city:'Moscow',       sub:'Russia' },
+  { tz:'Europe/Istanbul',     city:'Istanbul',     sub:'Turkiye' },
+  { tz:'Africa/Johannesburg', city:'Johannesburg', sub:'South Africa' },
+  { tz:'Africa/Lagos',        city:'Lagos',        sub:'Nigeria' },
+  { tz:'Europe/Berlin',       city:'Berlin',       sub:'Germany' },
+  { tz:'Europe/Paris',        city:'Paris',        sub:'France' },
+  { tz:'Europe/Madrid',       city:'Madrid',       sub:'Spain' },
+  { tz:'Europe/Stockholm',    city:'Stockholm',    sub:'Sweden' },
+  { tz:'Europe/London',       city:'London',       sub:'United Kingdom' },
+  { tz:'Europe/Dublin',       city:'Dublin',       sub:'Ireland' },
+  { tz:'Europe/Lisbon',       city:'Lisbon',       sub:'Portugal' },
+  { tz:'America/Sao_Paulo',   city:'Sao Paulo',    sub:'Brazil' },
+  { tz:'America/Argentina/Buenos_Aires', city:'Buenos Aires', sub:'Argentina' },
+  { tz:'America/New_York',    city:'New York',     sub:'US Eastern' },
+  { tz:'America/Toronto',     city:'Toronto',      sub:'Canada East' },
+  { tz:'America/Bogota',      city:'Bogota',       sub:'Colombia' },
+  { tz:'America/Mexico_City', city:'Mexico City',  sub:'Mexico' },
+  { tz:'America/Chicago',     city:'Chicago',      sub:'US Central' },
+  { tz:'America/Denver',      city:'Denver',       sub:'US Mountain' },
+  { tz:'America/Los_Angeles', city:'Los Angeles',  sub:'US Pacific' },
+  { tz:'America/Anchorage',   city:'Anchorage',    sub:'Alaska' },
+  { tz:'Pacific/Honolulu',    city:'Honolulu',     sub:'Hawaii' }
+];
+
+var STORE = 'gta6-region';
+
+/* ---------- timezone maths -------------------------------------------- */
+function partsIn(tz, date){
+  var f = new Intl.DateTimeFormat('en-US', {
+    timeZone: tz, hourCycle: 'h23',
+    year:'numeric', month:'2-digit', day:'2-digit',
+    hour:'2-digit', minute:'2-digit', second:'2-digit'
+  }).formatToParts(date);
+  var o = {};
+  for (var i = 0; i < f.length; i++) if (f[i].type !== 'literal') o[f[i].type] = +f[i].value;
+  return o;
+}
+/* how far ahead of UTC the zone sits, at that instant */
+function offsetAt(tz, date){
+  var p = partsIn(tz, date);
+  return Date.UTC(p.year, p.month - 1, p.day, p.hour, p.minute, p.second)
+       - (date.getTime() - date.getMilliseconds());
+}
+/* the UTC instant at which the wall clock in tz reads the release moment */
+function launchInstant(tz){
+  var wall = Date.UTC(RELEASE.y, RELEASE.m - 1, RELEASE.d, RELEASE.h, RELEASE.mi, 0);
+  var guess = wall - offsetAt(tz, new Date(wall));
+  return wall - offsetAt(tz, new Date(guess));
+}
+function pad(n, w){ n = String(n); while (n.length < (w || 2)) n = '0' + n; return n; }
+function offsetLabel(tz, at){
+  var mins = offsetAt(tz, at) / 60000;
+  var sign = mins < 0 ? '−' : '+';
+  mins = Math.abs(mins);
+  return 'UTC' + sign + pad(Math.floor(mins / 60)) + ':' + pad(mins % 60);
+}
+var MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+var DOW = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+/* Carries the weekday deliberately. Every region unlocks on Thursday 19 Nov
+   *its own* time, but the shared UTC instant lands on Wednesday for anything
+   east of UTC. Without the weekday that column reads like a contradiction. */
+function stampUTC(ms){
+  var d = new Date(ms);
+  return DOW[d.getUTCDay()] + ' ' + pad(d.getUTCDate()) + ' ' + MON[d.getUTCMonth()]
+       + ', ' + pad(d.getUTCHours()) + ':' + pad(d.getUTCMinutes());
+}
+function split(ms){
+  var t = Math.max(0, ms);
+  return {
+    d: Math.floor(t / 86400000),
+    h: Math.floor(t / 3600000) % 24,
+    m: Math.floor(t / 60000) % 60,
+    s: Math.floor(t / 1000) % 60
+  };
+}
+
+/* ---------- resolve every region --------------------------------------- */
+/* The offset is taken AT THE LAUNCH INSTANT, not today. Sydney is UTC+10 in
+   September but UTC+11 on 19 November, and that later figure is the one
+   that matters here. */
+REGIONS.forEach(function(r){ r.at = launchInstant(r.tz); r.off = offsetLabel(r.tz, new Date(r.at)); });
+function bySchedule(a, b){ return a.at - b.at || a.city.localeCompare(b.city); }
+REGIONS.sort(bySchedule);
+
+/* ---------- detect on every visit; a saved choice wins ------------------ */
+var myTz = 'UTC';
+try { myTz = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'; } catch (e) {}
+function ensureRegion(tz){
+  for (var i = 0; i < REGIONS.length; i++) if (REGIONS[i].tz === tz) return REGIONS[i];
+  var r = { tz: tz, city: tz.split('/').pop().replace(/_/g, ' '), sub: 'Your location' };
+  try { r.at = launchInstant(tz); r.off = offsetLabel(tz, new Date(r.at)); }
+  catch (e) { return REGIONS[0]; }
+  REGIONS.push(r);
+  REGIONS.sort(bySchedule);
+  return r;
+}
+var home = ensureRegion(myTz);          /* re-detected fresh every load */
+var pinned = null;                      /* an explicit choice, if one is saved */
+try {
+  var saved = localStorage.getItem(STORE);
+  if (saved) for (var i = 0; i < REGIONS.length; i++) if (REGIONS[i].tz === saved) pinned = REGIONS[i];
+} catch (e) {}
+var current = pinned || home;
+
+/* ---------- one wave per shared unlock instant -------------------------- */
+var WAVES = [];
+(function(){
+  var byInstant = {};
+  REGIONS.forEach(function(r){
+    var k = String(r.at);
+    if (!byInstant[k]){ byInstant[k] = { at: r.at, off: r.off, members: [] }; WAVES.push(byInstant[k]); }
+    byInstant[k].members.push(r);
+  });
+  WAVES.sort(function(a, b){ return a.at - b.at; });
+  WAVES.forEach(function(w, i){
+    w.no = i + 1;
+    w.members.sort(function(a, b){ return a.city.localeCompare(b.city); });
+    w.members.forEach(function(r){ r.wave = w; });
+  });
+})();
+var FIRST = WAVES[0].at;
+
+/* ---------- picker ------------------------------------------------------ */
+var sel = document.getElementById('region');
+var autoBtn = document.getElementById('auto');
+REGIONS.forEach(function(r){
+  var o = document.createElement('option');
+  o.value = r.tz;
+  o.textContent = r.city + ', ' + r.sub + '  (' + r.off + ')' + (r === home ? '  · detected' : '');
+  sel.appendChild(o);
+});
+sel.value = current.tz;
+
+/* ---------- board ------------------------------------------------------- */
+var feed = document.getElementById('feed');
+var rows = WAVES.map(function(w){
+  var tr = document.createElement('tr');
+  tr.innerHTML =
+    '<td class="off">' + w.off + '</td>' +
+    '<td class="who"></td>' +
+    '<td>' + stampUTC(w.at) + '</td>' +
+    '<td class="r rem"></td>' +
+    '<td class="r"><span class="pill w">Waiting</span></td>';
+  feed.appendChild(tr);
+  return { w: w, tr: tr, who: tr.children[1], rem: tr.children[3], pill: tr.children[4].firstChild };
+});
+
+function paintBoard(){
+  rows.forEach(function(row){
+    row.who.innerHTML = row.w.members.map(function(r){
+      return r === current ? '<span class="me">' + r.city + '</span>' : r.city;
+    }).join('<span class="n">, </span>');
+    row.tr.classList.toggle('you', row.w === current.wave);
+  });
+}
+
+/* ---------- the clock --------------------------------------------------- */
+var vD = document.getElementById('v-d'), vH = document.getElementById('v-h'),
+    vM = document.getElementById('v-m'), vS = document.getElementById('v-s'),
+    sD = document.getElementById('s-d'), sH = document.getElementById('s-h'),
+    sM = document.getElementById('s-m'), sS = document.getElementById('s-s');
+var seen = {};
+
+function setSeg(box, el, val){
+  if (seen[el.id] === val) return;
+  seen[el.id] = val;
+  el.textContent = val;
+  box.classList.remove('beat');
+  void box.offsetWidth;
+  box.classList.add('beat');
+}
+
+function paintStatic(){
+  sel.value = current.tz;
+  autoBtn.hidden = (current === home);
+  paintBoard();
+}
+paintStatic();
+
+function frame(){
+  var now = Date.now();
+  var diff = current.at - now;
+  var launched = diff <= 0;
+  document.body.classList.toggle('launched', launched);
+
+  var t = split(launched ? now - current.at : diff);
+  setSeg(sD, vD, pad(t.d, 2));   /* pad() never truncates, so 100+ days still fits */
+  setSeg(sH, vH, pad(t.h));
+  setSeg(sM, vM, pad(t.m));
+  setSeg(sS, vS, pad(t.s));
+
+  for (var j = 0; j < rows.length; j++){
+    var row = rows[j], dd = row.w.at - now;
+    if (dd <= 0){
+      row.rem.textContent = 'Unlocked';
+      row.pill.className = 'pill o';
+      row.pill.textContent = 'Playing';
+      row.tr.classList.add('gone');
+    } else {
+      var q = split(dd);
+      row.rem.textContent = q.d + 'd ' + pad(q.h) + ':' + pad(q.m) + ':' + pad(q.s);
+      if (dd < 3600000){ row.pill.className = 'pill s'; row.pill.textContent = 'Final hour'; }
+      else if (row.w.at === FIRST){ row.pill.className = 'pill f'; row.pill.textContent = 'First'; }
+      else { row.pill.className = 'pill w'; row.pill.textContent = 'Waiting'; }
+    }
+  }
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+
+/* ---------- keep the hero loop rolling ----------------------------------- */
+(function(){
+  var vid = document.querySelector('.bg');
+  if (!vid) return;
+
+  /* The loop is ~27 MB. Phones, metered connections and anyone who has asked
+     for reduced motion get the poster instead, which is 140 KB and looks the
+     same at a glance. The file is only requested once we've decided to use it. */
+  function wanted(){
+    try {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return false;
+      if (!window.matchMedia('(min-width: 760px)').matches) return false;
+      var c = navigator.connection;
+      if (c && (c.saveData || /(^|-)2g$/.test(c.effectiveType || ''))) return false;
+    } catch (e) {}
+    return true;
+  }
+  if (!wanted()) return;
+
+  vid.src = vid.getAttribute('data-src');
+
+  function nudge(){
+    if (vid.paused){
+      var p = vid.play();
+      if (p && p.catch) p.catch(function(){});   /* blocked until interaction */
+    }
+  }
+  vid.addEventListener('canplay', nudge);
+  vid.addEventListener('loadeddata', nudge);
+  document.addEventListener('visibilitychange', function(){ if (!document.hidden) nudge(); });
+  window.addEventListener('pointerdown', nudge);
+  window.addEventListener('focus', nudge);
+  nudge();
+})();
+
+/* ==================================================================
+   RADIO LEONIDA
+   The 21 tracks Rockstar has actually shown so far: 7 across the
+   two trailers, 14 in the Extended Look. Metadata only: no audio ships
+   with this project. Drop your own files in assets/radio/ under the
+   filenames below and they light up. See assets/radio/README.md.
+   ================================================================== */
+var TRACKS = [
+  /* Trailer 1, December 2023 */
+  { g:'Trailer 1', a:'Tom Petty',              t:'Love Is a Long Road',                    y:1989, f:'tom-petty-love-is-a-long-road.mp3' },
+  /* Trailer 2, May 2025 */
+  { g:'Trailer 2', a:'The Pointer Sisters',    t:'Hot Together',                           y:1986, f:'pointer-sisters-hot-together.mp3' },
+  { g:'Trailer 2', a:'Jay Ferguson',           t:'Thunder Island',                         y:1977, f:'jay-ferguson-thunder-island.mp3' },
+  { g:'Trailer 2', a:'Zenglen',                t:'Child Support',                          y:2004, f:'zenglen-child-support.mp3' },
+  { g:'Trailer 2', a:'Wang Chung',             t:'Everybody Have Fun Tonight',             y:1986, f:'wang-chung-everybody-have-fun-tonight.mp3' },
+  { g:'Trailer 2', a:'Tammy Wynette',          t:"Talkin' to Myself Again",                y:1987, f:'tammy-wynette-talkin-to-myself-again.mp3' },
+  { g:'Trailer 2', a:'The Arrows',             t:"I Love Rock 'n' Roll",                   y:1975, f:'the-arrows-i-love-rock-n-roll.mp3' },
+  /* Extended Look, August 2026 */
+  { g:'Extended Look', a:'Kodak Black',                t:'Skrilla',                            y:2015, f:'kodak-black-skrilla.mp3' },
+  { g:'Extended Look', a:'Def Leppard',                t:'Love Bites',                         y:1987, f:'def-leppard-love-bites.mp3' },
+  { g:'Extended Look', a:'Cliff Richard',              t:'Devil Woman',                        y:1976, f:'cliff-richard-devil-woman.mp3' },
+  { g:'Extended Look', a:'Phil Collins',               t:'Against All Odds (Take a Look at Me Now)', y:1984, f:'phil-collins-against-all-odds.mp3' },
+  { g:'Extended Look', a:'Prefab Sprout',              t:'Cars and Girls',                     y:1988, f:'prefab-sprout-cars-and-girls.mp3' },
+  { g:'Extended Look', a:'!!! feat. Meah Pace',        t:'Off the Grid',                       y:2019, f:'chk-chk-chk-off-the-grid.mp3' },
+  { g:'Extended Look', a:'Aluna & Jayda G',            t:"Mine O' Mine",                       y:2023, f:'aluna-jayda-g-mine-o-mine.mp3' },
+  { g:'Extended Look', a:'Chimbala & Omega',           t:'Se Me Nota (Agarrame)',              y:2021, f:'chimbala-omega-se-me-nota.mp3' },
+  { g:'Extended Look', a:'Depeche Mode',               t:'People Are People',                  y:1984, f:'depeche-mode-people-are-people.mp3' },
+  { g:'Extended Look', a:'Birdman feat. Lil Wayne',    t:'Pop Bottles',                        y:2006, f:'birdman-pop-bottles.mp3' },
+  { g:'Extended Look', a:'Sexyy Red & Tay Keith',      t:'Pound Town',                         y:2023, f:'sexyy-red-pound-town.mp3' },
+  { g:'Extended Look', a:'Elderbrook & Bob Moses',     t:'Inner Light',                        y:2021, f:'elderbrook-bob-moses-inner-light.mp3' },
+  { g:'Extended Look', a:'The Bellamy Brothers',       t:'Let Your Love Flow',                 y:1976, f:'bellamy-brothers-let-your-love-flow.mp3' },
+  { g:'Extended Look', a:'Captain & Tennille',         t:"But I Think It's a Dream",           y:1980, f:'captain-tennille-but-i-think-its-a-dream.mp3' }
+];
+
+(function(){
+  var box   = document.getElementById('radio'),
+      head  = document.getElementById('radioToggle'),
+      body  = document.getElementById('radioBody'),
+      list  = document.getElementById('radioList'),
+      now   = document.getElementById('nowPlaying'),
+      audio = document.getElementById('radioAudio'),
+      bPlay = document.getElementById('rPlay'),
+      bPrev = document.getElementById('rPrev'),
+      bNext = document.getElementById('rNext'),
+      bShuf = document.getElementById('rShuf'),
+      vol   = document.getElementById('rVol');
+
+  var idx = -1, shuffle = false, btns = [];
+
+  /* ---- build the list, grouped by where the track showed up ---- */
+  var seenGroup = null;
+  TRACKS.forEach(function(tr, i){
+    if (tr.g !== seenGroup){
+      seenGroup = tr.g;
+      var h = document.createElement('h4');
+      h.textContent = tr.g;
+      list.appendChild(h);
+    }
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'trk';
+    b.innerHTML = '<span class="ti"><b></b><span></span></span><span class="yr">' + tr.y + '</span>';
+    b.querySelector('b').textContent = tr.t;
+    b.querySelector('.ti span').textContent = tr.a;
+    b.addEventListener('click', function(){ play(i); });
+    list.appendChild(b);
+    btns[i] = b;
+  });
+
+  function label(i){ return TRACKS[i].a + ' - ' + TRACKS[i].t; }
+
+  function mark(){
+    btns.forEach(function(b, i){ b.setAttribute('aria-current', i === idx ? 'true' : 'false'); });
+  }
+
+  /* ---- playback ---- */
+  function play(i){
+    if (i < 0 || i >= TRACKS.length) return;
+    idx = i;
+    mark();
+    audio.src = 'assets/radio/' + TRACKS[i].f;
+    now.textContent = label(i);
+    var p = audio.play();
+    if (p && p.catch) p.catch(function(){ /* blocked or missing; the error handler deals with it */ });
+  }
+
+  /* step to the next track that hasn't already failed */
+  function step(dir){
+    if (!TRACKS.length) return;
+    var tried = 0, i = idx;
+    while (tried < TRACKS.length){
+      tried++;
+      if (shuffle && dir > 0){
+        i = Math.floor(Math.random() * TRACKS.length);
+      } else {
+        i = (i + dir + TRACKS.length) % TRACKS.length;
+      }
+      if (!btns[i].classList.contains('missing')){ play(i); return; }
+    }
+    /* everything is missing */
+    box.classList.remove('playing');
+    now.textContent = '';
+  }
+
+  audio.addEventListener('error', function(){
+    if (idx < 0) return;
+    btns[idx].classList.add('missing');
+    box.classList.remove('playing');
+    setPlayIcon(false);
+    step(1);
+  });
+  audio.addEventListener('playing', function(){
+    box.classList.add('playing');
+    setPlayIcon(true);
+  });
+  audio.addEventListener('pause', function(){ box.classList.remove('playing'); setPlayIcon(false); });
+  audio.addEventListener('ended', function(){ step(1); });
+  function setPlayIcon(playing){
+    bPlay.innerHTML = playing ? '&#10074;&#10074;' : '&#9654;';
+    bPlay.title = playing ? 'Pause' : 'Play';
+    bPlay.setAttribute('aria-label', bPlay.title);
+  }
+
+  bPlay.addEventListener('click', function(){
+    if (idx < 0){ step(1); return; }
+    if (audio.paused){ var p = audio.play(); if (p && p.catch) p.catch(function(){}); }
+    else audio.pause();
+  });
+  bNext.addEventListener('click', function(){ step(1); });
+  bPrev.addEventListener('click', function(){ step(-1); });
+  bShuf.addEventListener('click', function(){
+    shuffle = !shuffle;
+    bShuf.classList.toggle('on', shuffle);
+    bShuf.setAttribute('aria-pressed', String(shuffle));
+    try { localStorage.setItem('gta6-shuffle', shuffle ? '1' : '0'); } catch (e) {}
+  });
+
+  vol.addEventListener('input', function(){
+    audio.volume = +vol.value;
+    try { localStorage.setItem('gta6-vol', vol.value); } catch (e) {}
+  });
+
+  head.addEventListener('click', function(){
+    var open = box.classList.toggle('open');
+    head.setAttribute('aria-expanded', String(open));
+    try { localStorage.setItem('gta6-radio-open', open ? '1' : '0'); } catch (e) {}
+  });
+
+  /* ---- restore preferences ---- */
+  try {
+    var v = localStorage.getItem('gta6-vol');
+    if (v !== null){ vol.value = v; }
+    if (localStorage.getItem('gta6-shuffle') === '1'){ bShuf.click(); }
+    if (localStorage.getItem('gta6-radio-open') === '1'){ head.click(); }
+  } catch (e) {}
+  audio.volume = +vol.value;
+  setPlayIcon(false);
+})();
+
+/* ---------- footer: Sources > Music -------------------------------------- */
+(function(){
+  var ul = document.getElementById('musicList');
+  var count = document.getElementById('musicCount');
+  if (!ul) return;
+  count.textContent = TRACKS.length;
+  TRACKS.forEach(function(tr){
+    var li = document.createElement('li');
+    var a = document.createElement('a');
+    /* tr.sp holds an exact Spotify track URL when one is filled in; otherwise
+       fall back to a search, which always resolves and can't go stale. */
+    a.href = tr.sp || ('https://open.spotify.com/search/' + encodeURIComponent(tr.a + ' ' + tr.t));
+    a.target = '_blank';
+    a.rel = 'noopener';
+    a.innerHTML = '<b></b> - <span class="ti"></span> <span class="yr"></span>';
+    a.querySelector('b').textContent = tr.a;
+    a.querySelector('.ti').textContent = tr.t;
+    a.querySelector('.yr').textContent = tr.y;
+    li.appendChild(a);
+    ul.appendChild(li);
+  });
+})();
+
+/* ---------- controls ----------------------------------------------------- */
+sel.addEventListener('change', function(){
+  for (var i = 0; i < REGIONS.length; i++) if (REGIONS[i].tz === sel.value) current = REGIONS[i];
+  try { localStorage.setItem(STORE, current.tz); } catch (e) {}   /* pin it */
+  seen = {};
+  paintStatic();
+});
+autoBtn.addEventListener('click', function(){
+  try { localStorage.removeItem(STORE); } catch (e) {}            /* back to auto-detect */
+  current = home;
+  seen = {};
+  paintStatic();
+});
+</script>
+</body>
+</html>
