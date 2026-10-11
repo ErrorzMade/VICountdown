@@ -1,4 +1,11 @@
 .claude/
+.codex/
+.agents/
+.finale-polish/
+.vscode/
+.idea/
+.env
+.env.*
 Thumbs.db
 desktop.ini
 .DS_Store

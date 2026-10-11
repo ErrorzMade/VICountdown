@@ -219,6 +219,122 @@ footer{margin-top:clamp(56px,9vw,112px);border-top:1px solid var(--line);padding
 .mtracks a:hover b{color:var(--pink)}
 .mtracks .yr{color:var(--dim)}
 
+/* ============ FINALE: the last 60 seconds ============ */
+.clock .seg{transition:opacity 1.2s ease}
+body.finale-ready .clock .seg:not(:last-child){opacity:.48}
+body.finale-ready .clock .seg:last-child .n{animation:finbreathe 2.4s ease-in-out infinite}
+.fin-announcement{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+body.finale-on{overflow:hidden}
+body.finale-on .radio{display:none}
+.finale{
+  position:fixed;inset:0;z-index:200;background:#000;color:#fff;overflow:hidden;
+  --fin-energy:0;opacity:0;transition:opacity 1.1s cubic-bezier(.2,.7,.2,1);
+}
+.finale.show{opacity:1}
+.finale.is-morphing{background:transparent;opacity:1;transition:none}
+.finale.is-morphing .fin-art,.finale.is-morphing .fin-veil{animation:finbackdrop 1.4s ease both}
+.finale.is-morphing .fin-count{opacity:1;transform:none;filter:none;transition:none}
+.finale.is-morphing .fin-kick,.finale.is-morphing .fin-l{animation:finlabels 1.4s ease both}
+.finale.is-morphing .fin-n.tick{animation:none}
+body.finale-morphing .clock .seg:last-child{visibility:hidden}
+@keyframes finbackdrop{from{opacity:0}to{opacity:1}}
+@keyframes finlabels{0%,35%{opacity:0}100%{opacity:1}}
+.finale:not(.show){pointer-events:none}
+.finale:focus{outline:none}
+.finale[hidden],.finale [hidden]{display:none!important}
+.fin-art{position:absolute;inset:0;background:#0a0910 url('assets/hero-poster.jpg') center/cover no-repeat}
+.fin-img{
+  position:absolute;inset:-3%;background:center/cover no-repeat #000;
+  opacity:0;transition:opacity 1.15s ease;
+}
+.fin-img.on{opacity:1;animation:finkb 6s cubic-bezier(.15,.45,.4,1) forwards}
+.fin-art.fast .fin-img{transition-duration:.38s}
+.fin-art.fast .fin-img.on{animation-duration:1.2s}
+@keyframes finkb{from{transform:scale(1.065)}to{transform:scale(1)}}
+.fin-veil{
+  position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(72% 62% at 50% 48%,rgba(8,6,12,.22),rgba(8,6,12,.88) 100%),
+    linear-gradient(180deg,rgba(8,6,12,.55),rgba(8,6,12,.12) 38%,rgba(8,6,12,.8));
+}
+.fin-veil::after{
+  content:'';position:absolute;inset:0;opacity:calc(.08 + var(--fin-energy) * .22);
+  background:radial-gradient(ellipse at 50% 110%,rgba(255,45,170,.5),transparent 65%);
+}
+.fin-count{
+  position:absolute;inset:0;display:grid;place-content:center;text-align:center;
+  padding:50px 18px;opacity:0;transform:translateY(20px) scale(.96);filter:blur(6px);
+  transition:opacity .8s ease,transform 1.2s cubic-bezier(.16,1,.3,1),filter 1.2s ease;
+}
+.finale.show .fin-count{opacity:1;transform:none;filter:none}
+.fin-kick{
+  font-size:clamp(10px,1.3vw,15px);font-weight:800;letter-spacing:.42em;padding-left:.42em;
+  text-transform:uppercase;text-shadow:var(--neon-soft);margin:0 0 clamp(20px,3vh,34px);
+}
+.fin-n{
+  display:block;min-width:2.05ch;font-family:var(--timer);font-size:clamp(120px,min(34vw,48svh),440px);line-height:.82;
+  font-variant-numeric:tabular-nums;letter-spacing:.02em;text-shadow:var(--neon);
+}
+.fin-l{
+  display:block;margin-top:clamp(20px,3vh,34px);font-size:clamp(9px,1.1vw,12px);font-weight:700;
+  letter-spacing:.42em;padding-left:.42em;text-transform:uppercase;color:#d9d3e2;
+}
+.fin-n.tick{animation:fintick .65s cubic-bezier(.16,1,.3,1)}
+.finale.hot .fin-n.tick{animation:fintickhot .65s cubic-bezier(.16,1,.3,1)}
+@keyframes fintick{0%{transform:translateY(5px) scale(1.035);opacity:.82}100%{transform:none;opacity:1}}
+@keyframes fintickhot{0%{transform:scale(1.1);filter:brightness(1.3)}100%{transform:none;filter:none}}
+@keyframes finbreathe{50%{filter:brightness(1.2)}}
+
+.fin-reveal{position:absolute;inset:0;background:#000;opacity:0;transition:opacity .35s ease}
+.finale.reveal .fin-reveal{opacity:1}
+.finale.reveal .fin-count{opacity:0;transition-delay:0s}
+/* 16:9 box sized to fill the screen; the frame is black at the edges so any
+   crop is invisible. On portrait phones it overhangs the sides instead of
+   shrinking, so the logo stays a sensible size. */
+.fin-frame{
+  position:absolute;left:50%;top:50%;width:min(177.78vh,200vw);aspect-ratio:16/9;
+  transform:translate(-50%,-50%);container-type:size;
+}
+/* trailer 1 logo reveal, cut from Rockstar's 4K master (78.534s to 84.534s) */
+.fin-frame video,.fin-frame img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.fin-frame img{opacity:0}
+.finale.clip-fallback .fin-frame img{opacity:1}
+.finale.clip-fallback .fin-frame video{opacity:0}
+.finale.still-fallback .fin-frame img{visibility:hidden}
+.fin-plain-title{position:absolute;inset:0;display:grid;place-content:center;text-align:center;padding:20px;font-family:var(--timer);font-size:clamp(32px,8vw,100px);line-height:1;text-shadow:var(--neon)}
+.finale:not(.still-fallback) .fin-plain-title{visibility:hidden}
+/* sits exactly where the trailer's "COMING 2025" line was: centred at 88% of
+   the frame height, cap height about 4.2% of the frame */
+.fin-out{
+  position:absolute;left:0;right:0;top:88%;transform:translateY(-50%);margin:0;text-align:center;
+  font-weight:800;text-transform:uppercase;letter-spacing:.42em;padding-left:.42em;
+  font-size:clamp(13px,3.4vw,40px);font-size:max(13px,5.9cqh);
+  opacity:0;text-shadow:var(--neon-soft);
+}
+.finale.out .fin-out{animation:finout 1.6s cubic-bezier(.2,.7,.2,1) .2s forwards}
+@keyframes finout{0%{opacity:0;letter-spacing:.9em}100%{opacity:1;letter-spacing:.42em}}
+.fin-btn{
+  position:absolute;left:50%;transform:translateX(-50%);z-index:3;
+  background:rgba(12,10,18,.7);backdrop-filter:blur(10px);color:#fff;cursor:pointer;
+  border:1px solid rgba(255,45,170,.55);border-radius:2px;padding:13px 22px;
+  font-family:var(--ui);font-size:11px;font-weight:800;letter-spacing:.24em;text-transform:uppercase;
+}
+.fin-btn:hover{background:rgba(255,45,170,.16)}
+.fin-sound{top:max(18px,env(safe-area-inset-top))}
+.fin-enter{bottom:max(26px,env(safe-area-inset-bottom));opacity:0;animation:finout 1s ease .1s forwards}
+
+@media (max-height:460px){
+  .fin-count{padding:40px 18px}
+  .fin-kick{margin-bottom:14px}
+  .fin-l{margin-top:14px}
+  .fin-sound{padding:9px 14px;font-size:9px}
+}
+@media (prefers-reduced-motion:reduce){
+  body.finale-ready .clock .seg:last-child .n,.fin-img.on,.fin-n.tick,.finale.hot .fin-n.tick{animation:none}
+  .finale,.fin-count,.fin-img,.fin-frame img,.fin-reveal,.clock .seg{transition:none}
+  .finale.out .fin-out,.fin-enter{animation:none;opacity:1}
+}
+
 /* ============ RADIO LEONIDA ============ */
 .radio{
   position:fixed;right:22px;bottom:22px;z-index:70;
@@ -399,6 +515,28 @@ footer{margin-top:clamp(56px,9vw,112px);border-top:1px solid var(--line);padding
   </div>
 </footer>
 
+<div class="finale" id="finale" role="region" aria-label="Grand Theft Auto VI launch finale" tabindex="-1" hidden>
+  <div class="fin-art" id="finArt" aria-hidden="true"></div>
+  <div class="fin-veil" aria-hidden="true"></div>
+  <div class="fin-count" role="timer" aria-live="off">
+    <p class="fin-kick">Grand Theft Auto VI</p>
+    <span class="fin-n" id="finN">60</span>
+    <span class="fin-l">Seconds</span>
+  </div>
+  <div class="fin-reveal">
+    <div class="fin-frame">
+      <p class="fin-plain-title" aria-hidden="true">Grand Theft Auto VI</p>
+      <video id="finVideo" muted playsinline preload="none" data-src="assets/finale/reveal.mp4" aria-hidden="true"></video>
+      <img id="finStill" alt="Grand Theft Auto VI" data-src="assets/finale/reveal-end.webp">
+      <p class="fin-out">Out now</p>
+    </div>
+  </div>
+  <button class="fin-btn fin-sound" id="finSound" type="button" hidden>Tap for sound</button>
+  <button class="fin-btn fin-enter" id="finEnter" type="button" hidden>Enter Vice City</button>
+  <audio id="finAudio" preload="none" data-src="assets/radio/tom-petty-love-is-a-long-road.mp3"></audio>
+</div>
+<p class="fin-announcement" id="finAnnouncement" role="status" aria-live="polite" aria-atomic="true"></p>
+
 <aside class="radio" id="radio">
   <button class="radio-head" id="radioToggle" type="button" aria-expanded="false" aria-controls="radioBody">
     <span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
@@ -429,6 +567,14 @@ footer{margin-top:clamp(56px,9vw,112px);border-top:1px solid var(--line);padding
    not one global instant. Change these five numbers if it moves.
    ================================================================== */
 var RELEASE = { y: 2026, m: 11, d: 19, h: 0, mi: 0 };
+
+/* Every clock read goes through here. /jump previews the final 65 seconds
+   in this page's memory only. Consume the marker immediately so a refresh
+   returns to real time without affecting anyone else's countdown. */
+var SHIFT = 0;
+var jumpRequested = location.hash === '#jump';
+if (jumpRequested) window.history.replaceState(null, '', location.pathname + location.search);
+function nowMs(){ return Date.now() + SHIFT; }
 
 var REGIONS = [
   { tz:'Pacific/Auckland',    city:'Auckland',     sub:'New Zealand' },
@@ -626,7 +772,7 @@ function paintStatic(){
 paintStatic();
 
 function frame(){
-  var now = Date.now();
+  var now = nowMs();
   var diff = current.at - now;
   var launched = diff <= 0;
   document.body.classList.toggle('launched', launched);
@@ -652,6 +798,7 @@ function frame(){
       else { row.pill.className = 'pill w'; row.pill.textContent = 'Waiting'; }
     }
   }
+  if (window.finaleTick) window.finaleTick(now);
   requestAnimationFrame(frame);
 }
 requestAnimationFrame(frame);
@@ -871,6 +1018,357 @@ var TRACKS = [
     li.appendChild(a);
     ul.appendChild(li);
   });
+})();
+
+/* ==================================================================
+   FINALE
+   Takes over the last 60 seconds of the selected region's countdown:
+   artwork slideshow and a big neon seconds counter, then the trailer 1
+   logo reveal over the final 6s, landing on OUT NOW at zero.
+
+   The song runs continuously underneath. Cross-correlating trailer 1's
+   soundtrack against the track puts the trailer's logo reveal at 224.64s
+   into the song, so that moment is lined up to start exactly when the
+   reveal clip does, the same way the trailer has it.
+   ================================================================== */
+(function(){
+  var FIN_LEN    = 60,      /* seconds of takeover */
+      REVEAL_LEN = 6.0,     /* trailer 1 master, 78.534s to 84.534s (180 frames) */
+      SONG_REVEAL = 224.64, /* reveal's first frame in the track; master soundtrack offset +146.11s */
+      SONG_AT_ZERO = SONG_REVEAL + REVEAL_LEN,
+      HOLD_AFTER = 600;     /* arrive within 10 min of launch and you still get OUT NOW */
+  var ARTWORKS = [];
+  for (var a = 1; a <= 11; a++) ARTWORKS.push('assets/finale/art' + (a < 10 ? '0' : '') + a + '.webp');
+  var SCREENSHOTS = [
+    'vice-city-01','vice-city-03','vice-city-06','vice-city-08',
+    'leonida-keys-01','leonida-keys-03','leonida-keys-05',
+    'port-gellhorn-01','port-gellhorn-03','port-gellhorn-05',
+    'ambrosia-01','ambrosia-03','ambrosia-05','grassrivers-01','grassrivers-03',
+    'mount-kalaga-national-park-01','mount-kalaga-national-park-03',
+    'jason-duval-01','jason-duval-04','jason-duval-06',
+    'lucia-caminos-01','lucia-caminos-03','lucia-caminos-05',
+    'cal-hampton-01','boobie-ike-02','real-dimez-01','raul-bautista-02','brian-heder-03'
+  ].map(function(name){ return 'assets/finale/screens/' + name + '.webp'; });
+  var ART = ARTWORKS.concat(SCREENSHOTS), ART_COUNT = ART.length, SLOW, FAST;
+  var FOCAL = {
+    'art02':'65% center', 'art06':'68% center', 'art07':'40% center',
+    'art08':'57% center', 'art09':'70% center', 'art11':'57% center',
+    'cal-hampton-01':'75% center', 'boobie-ike-02':'38% center',
+    'jason-duval-01':'65% center', 'jason-duval-06':'58% center',
+    'lucia-caminos-01':'38% center', 'lucia-caminos-03':'58% center',
+    'lucia-caminos-05':'65% center', 'real-dimez-01':'74% center',
+    'port-gellhorn-03':'35% center', 'grassrivers-01':'62% center'
+  };
+
+  function shuffledIndices(start, end){
+    var order = [];
+    for (var i = start; i < end; i++) order.push(i);
+    for (var j = order.length - 1; j > 0; j--){
+      var pick = Math.floor(Math.random() * (j + 1)), swap = order[j];
+      order[j] = order[pick]; order[pick] = swap;
+    }
+    return order;
+  }
+
+  function prepareMontage(){
+    var artwork = shuffledIndices(0, ARTWORKS.length);
+    var screenshots = shuffledIndices(ARTWORKS.length, ART_COUNT);
+    SLOW = [];
+    /* Fifteen shots at 3s each, alternating artwork with the wider world.
+       The final nine shots are fresh screenshots, with no repeats. */
+    for (var i = 0; i < 15; i++) SLOW.push(i % 3 === 0 ? artwork.shift() : screenshots.shift());
+    FAST = screenshots.slice(0, 9);
+  }
+  prepareMontage();
+
+  var el = document.getElementById('finale'),
+      artBox = document.getElementById('finArt'),
+      num = document.getElementById('finN'),
+      announcement = document.getElementById('finAnnouncement'),
+      video = document.getElementById('finVideo'),
+      still = document.getElementById('finStill'),
+      audio = document.getElementById('finAudio'),
+      soundBtn = document.getElementById('finSound'),
+      enterBtn = document.getElementById('finEnter');
+
+  var imgs = [];
+  for (var i = 0; i < ART_COUNT; i++){
+    var d = document.createElement('div');
+    d.className = 'fin-img';
+    artBox.appendChild(d);
+    imgs.push(d);
+  }
+
+  var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  var loaded = false, phase = 'off', lastN = null, lastArt = -1,
+      blocked = false, pending = false, videoPending = false, videoFailed = false,
+      mediaEpoch = 0, lastR = 0, previewMode = false, dismissed = false,
+      activeTarget = current.at, lastAnnouncement = '', heroWasPlaying = false, radioWasPlaying = false,
+      coveredElements = [], focusBefore = null, morph = null;
+  function doneKey(){ return 'gta6-finale-done-' + current.at; }
+  try { dismissed = sessionStorage.getItem(doneKey()) === '1'; } catch (e) {}
+
+  function announce(text){
+    if (text === lastAnnouncement) return;
+    lastAnnouncement = text;
+    announcement.textContent = text;
+  }
+
+  /* nothing is fetched until it's actually close */
+  function loadArt(i){
+    imgs[i].style.backgroundImage = 'url("' + ART[i] + '")';
+    var name = ART[i].split('/').pop().replace('.webp','');
+    imgs[i].style.backgroundPosition = FOCAL[name] || 'center';
+  }
+
+  function load(){
+    if (loaded) return;
+    loaded = true;
+    imgs.forEach(function(d, i){
+      if (!reducedMotion.matches || i === SLOW[0]) loadArt(i);
+    });
+    still.src = still.getAttribute('data-src');
+    video.poster = still.src;
+    if (!reducedMotion.matches){
+      video.src = video.getAttribute('data-src'); video.preload = 'auto'; video.load();
+    }
+    audio.src = audio.getAttribute('data-src'); audio.preload = 'auto'; audio.load();
+  }
+
+  var hero = document.querySelector('.bg'), radioAudio = document.getElementById('radioAudio');
+
+  function finishMorph(animation){
+    if (morph !== animation) return;
+    morph = null;
+    el.classList.remove('is-morphing');
+    document.body.classList.remove('finale-morphing');
+  }
+
+  function setPhase(p){
+    if (p === phase) return;
+    var was = phase; phase = p;
+    if (p === 'off'){
+      el.classList.remove('show');
+      document.body.classList.remove('finale-on');
+      if (morph){ var oldMorph = morph; morph = null; oldMorph.cancel(); }
+      el.classList.remove('is-morphing');
+      document.body.classList.remove('finale-morphing');
+      coveredElements.forEach(function(node){ node.inert = false; });
+      coveredElements = [];
+      if (focusBefore && focusBefore.isConnected) focusBefore.focus({ preventScroll: true });
+      mediaEpoch++; pending = false; videoPending = false;
+      soundBtn.hidden = true; enterBtn.hidden = true;
+      setTimeout(function(){ if (phase === 'off'){ el.hidden = true; el.classList.remove('reveal','out','hot','clip-fallback','still-fallback'); } }, 1100);
+      if (!audio.paused) audio.pause();
+      if (!video.paused) video.pause();
+      if (hero && heroWasPlaying){ var hp = hero.play(); if (hp && hp.catch) hp.catch(function(){}); }
+      if (radioAudio && radioWasPlaying){ var rp = radioAudio.play(); if (rp && rp.catch) rp.catch(function(){}); }
+      return;
+    }
+    if (was === 'off'){
+      /* Capture the normal seconds before scroll locking changes the layout. */
+      var source = document.getElementById('v-s'), sourceRect = source.getBoundingClientRect();
+      var sourceSize = parseFloat(getComputedStyle(source).fontSize);
+      var animateEntry = p === 'count' && !reducedMotion.matches && typeof num.animate === 'function';
+      el.hidden = false;
+      el.classList.remove('reveal','out','hot','clip-fallback','still-fallback');
+      if (p === 'count'){ lastN = Math.ceil(lastR); num.textContent = lastN; }
+      if (animateEntry){
+        el.classList.add('is-morphing');
+        document.body.classList.add('finale-morphing');
+      }
+      void el.offsetWidth;
+      el.classList.add('show');
+      document.body.classList.add('finale-on');
+      focusBefore = document.activeElement;
+      coveredElements = Array.prototype.filter.call(document.body.children, function(node){
+        if (node === el || node === announcement || node.tagName === 'SCRIPT' || node.inert) return false;
+        node.inert = true;
+        return true;
+      });
+      el.focus({ preventScroll: true });
+      soundBtn.hidden = !blocked;
+      enterBtn.hidden = true;
+      radioWasPlaying = !!radioAudio && !radioAudio.paused;
+      heroWasPlaying = !!hero && !hero.paused;
+      if (radioWasPlaying) radioAudio.pause();
+      if (heroWasPlaying) hero.pause();
+      if (animateEntry){
+        var target = num.getBoundingClientRect();
+        var sourceVisible = sourceRect.width > 0 && sourceRect.height > 0 &&
+          sourceRect.bottom > 0 && sourceRect.top < window.innerHeight;
+        var dx = sourceVisible ? sourceRect.left + sourceRect.width / 2 - target.left - target.width / 2 : 0;
+        var dy = sourceVisible ? sourceRect.top + sourceRect.height / 2 - target.top - target.height / 2 : 24;
+        var scale = sourceVisible ? sourceSize / parseFloat(getComputedStyle(num).fontSize) : 0.35;
+        morph = num.animate([
+          { transform: 'translate(' + dx + 'px,' + dy + 'px) scale(' + scale + ')' },
+          { transform: 'translate(0,0) scale(1)' }
+        ], { duration: 1450, easing: 'cubic-bezier(.18,.75,.17,1)' });
+        var animation = morph;
+        animation.finished.then(function(){ finishMorph(animation); }, function(){ finishMorph(animation); });
+      }
+    }
+    el.classList.toggle('reveal', p === 'reveal' || p === 'out');
+    el.classList.toggle('out', p === 'out');
+    if (p === 'out'){
+      if (!video.paused) video.pause();
+      announce('Grand Theft Auto VI is out now in ' + current.city + '.');
+    }
+  }
+
+  function showArt(idx){
+    if (idx === lastArt) return;
+    if (!imgs[idx].style.backgroundImage) loadArt(idx);
+    imgs.forEach(function(d){ d.classList.remove('on'); });
+    void imgs[idx].offsetWidth;
+    imgs[idx].classList.add('on');
+    lastArt = idx;
+  }
+
+  function syncAudio(r){
+    if (!audio.src || pending) return;
+    var end = audio.duration || 247.6;
+    var target = SONG_AT_ZERO - r;
+    if (target < 0 || target >= end - 0.05){ if (!audio.paused) audio.pause(); soundBtn.hidden = true; return; }
+    if (audio.error){ soundBtn.hidden = true; return; }
+    /* ease in over the first 2.5s of the takeover, out over the track's last 4s */
+    var v = Math.min(1, (FIN_LEN - r) / 2.5, (end - target) / 4);
+    audio.volume = Math.max(0, Math.min(1, v)) * 0.9;
+    if (audio.paused){
+      if (blocked) return;
+      try { audio.currentTime = target; } catch (e) {}
+      pending = true;
+      var epoch = mediaEpoch;
+      var p = audio.play();
+      if (p && p.then){
+        p.then(function(){
+          if (phase === 'off') audio.pause();
+          if (epoch === mediaEpoch) pending = false;
+        }, function(error){
+          if (epoch !== mediaEpoch) return;
+          pending = false;
+          blocked = true;
+          if (phase !== 'off' && error.name === 'NotAllowedError') soundBtn.hidden = false;
+        });
+      } else pending = false;
+    } else if (!audio.seeking && Math.abs(audio.currentTime - target) > 0.3){
+      audio.currentTime = target;
+    }
+  }
+
+  window.finaleTick = function(now){
+    /* A dismissal belongs to its unlock wave, not every region in the picker. */
+    if (current.at !== activeTarget){
+      setPhase('off');
+      activeTarget = current.at;
+      dismissed = false; lastN = null; lastArt = -1; lastAnnouncement = '';
+      prepareMontage();
+      try { dismissed = sessionStorage.getItem(doneKey()) === '1'; } catch (e) {}
+    }
+    var r = (current.at - now) / 1000;
+    lastR = r;
+    document.body.classList.toggle('finale-ready', !dismissed && r > FIN_LEN && r <= FIN_LEN + 10);
+    if (r <= 120 && r > -HOLD_AFTER) load();
+
+    var want;
+    if (dismissed || r > FIN_LEN || r <= -HOLD_AFTER) want = 'off';
+    else if (r > REVEAL_LEN) want = 'count';
+    else if (r > 0) want = 'reveal';
+    else want = 'out';
+    setPhase(want);
+    if (want === 'off') return;
+
+    if (want === 'count'){
+      var n = Math.ceil(r);
+      if (n !== lastN){
+        lastN = n;
+        num.textContent = n;
+        num.classList.remove('tick'); void num.offsetWidth; num.classList.add('tick');
+      }
+      el.classList.toggle('hot', r <= 15);
+      el.style.setProperty('--fin-energy', Math.pow(Math.max(0, (FIN_LEN - r) / FIN_LEN), 2).toFixed(3));
+      if (!lastAnnouncement || n === 60 || n === 30 || n === 15 || n === 10){
+        announce(n + ' seconds to Grand Theft Auto VI in ' + current.city + '.');
+      }
+      var fast = r <= 15 && !reducedMotion.matches;
+      artBox.classList.toggle('fast', fast);
+      showArt(reducedMotion.matches ? SLOW[0] : fast
+        ? FAST[Math.min(FAST.length - 1, Math.max(0, Math.floor(15 - r)))]
+        : SLOW[Math.min(SLOW.length - 1, Math.floor((FIN_LEN - r) / 3))]);
+    }
+
+    /* the clip's position is derived from the clock every frame, so joining
+       mid-reveal or returning from another tab lands on the right frame */
+    el.classList.toggle('still-fallback', !still.complete || !still.naturalWidth);
+    var clipReady = !reducedMotion.matches && !videoFailed && video.readyState >= 2;
+    /* Hold the decoded end of the reveal at launch. Swapping to a fading
+       still here exposed the black backing for a frame and caused a flash.
+       Late arrivals and unavailable clips use the still immediately. */
+    var holdVideo = want === 'out' && clipReady && video.currentTime >= REVEAL_LEN - 0.25;
+    el.classList.toggle('clip-fallback', (want === 'reveal' && !clipReady) || (want === 'out' && !holdVideo));
+    if (want === 'reveal' && clipReady){
+      var vt = REVEAL_LEN - r;
+      if (video.paused && !videoPending){
+        video.currentTime = vt;
+        videoPending = true;
+        var epoch = mediaEpoch;
+        var vp = video.play();
+        if (vp && vp.then) vp.then(function(){
+          if (phase !== 'reveal') video.pause();
+          if (epoch === mediaEpoch) videoPending = false;
+        }, function(){
+          if (epoch === mediaEpoch){ videoPending = false; videoFailed = true; }
+        });
+        else videoPending = false;
+      }
+      else if (!video.seeking && Math.abs(video.currentTime - vt) > 0.15) video.currentTime = vt;
+    }
+
+    if (want === 'out' && r < -3 && enterBtn.hidden){
+      enterBtn.hidden = false;
+      if (document.activeElement === el) enterBtn.focus({ preventScroll: true });
+    }
+
+    syncAudio(r);
+  };
+
+  video.addEventListener('error', function(){ videoFailed = true; });
+
+  /* browsers won't start sound without a tap; this button is the tap */
+  soundBtn.addEventListener('click', function(){
+    blocked = false;
+    soundBtn.hidden = true;
+    var target = SONG_AT_ZERO - lastR;
+    try { audio.currentTime = Math.max(0, target); } catch (e) {}
+    pending = true;
+    var epoch = mediaEpoch;
+    var p = audio.play();
+    if (p && p.then) p.then(function(){
+      if (phase === 'off') audio.pause();
+      if (epoch === mediaEpoch) pending = false;
+    }, function(error){
+      if (epoch !== mediaEpoch) return;
+      pending = false;
+      blocked = true;
+      if (phase !== 'off' && error.name === 'NotAllowedError') soundBtn.hidden = false;
+    });
+    else pending = false;
+  });
+
+  enterBtn.addEventListener('click', function(){
+    dismissed = true;
+    if (!previewMode){ try { sessionStorage.setItem(doneKey(), '1'); } catch (e) {} }
+    setPhase('off');
+    if (previewMode){
+      SHIFT = 0; seen = {}; previewMode = false;
+    }
+  });
+
+  if (jumpRequested){
+    SHIFT = (current.at - 65000) - Date.now();
+    previewMode = true; dismissed = false;
+    load();
+  }
 })();
 
 /* ---------- controls ----------------------------------------------------- */
