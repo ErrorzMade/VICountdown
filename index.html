@@ -25,8 +25,8 @@
   --deep:#0C0B10;
   --white:#FFFFFF;
   --pink:#FF2DAA;
-  --grey:#A7A2B0;
-  --dim:#6B6675;
+  --grey:#B3ADBD;
+  --dim:#8C8598;
   --line:rgba(255,255,255,.13);
   --line-2:rgba(255,255,255,.07);
   --ui:'Archivo',"Segoe UI",system-ui,-apple-system,sans-serif;
@@ -47,7 +47,7 @@
     0 0 26px  rgba(170, 42,198,.28);
 }
 *{box-sizing:border-box}
-html{scroll-behavior:smooth}
+html{scroll-behavior:smooth;scroll-padding-top:24px;scrollbar-color:#514356 var(--black)}
 body{
   margin:0;background:var(--black);color:var(--white);
   font-family:var(--ui);font-size:16px;line-height:1.6;
@@ -59,6 +59,8 @@ a{color:inherit;text-decoration:none}
 h1,h2,h3,figure,p{margin:0}
 h1,h2,h3{text-wrap:balance}
 img{max-width:100%}
+button,select,input,summary{-webkit-tap-highlight-color:transparent}
+button,select,input{touch-action:manipulation}
 
 /* ============ HERO ============ */
 .stage{
@@ -92,7 +94,7 @@ img{max-width:100%}
 .street{
   margin:clamp(30px,4.5vw,52px) 0 0;text-align:center;
   font-size:clamp(14px,2vw,23px);font-weight:700;
-  letter-spacing:.3em;text-transform:uppercase;
+  letter-spacing:clamp(.16em,.3vw,.3em);text-transform:uppercase;
   text-shadow:var(--neon-soft);
 }
 
@@ -104,7 +106,7 @@ img{max-width:100%}
 }
 .seg{text-align:center;min-width:0}
 .seg .n{
-  display:block;font-family:var(--timer);font-weight:400;
+  display:block;font-family:var(--timer);font-weight:400;font-variant-numeric:tabular-nums;
   font-size:clamp(56px,11.5vw,146px);line-height:.84;letter-spacing:.02em;
   color:var(--white);text-shadow:var(--neon);
 }
@@ -131,7 +133,7 @@ body.launched .opened{display:block}
 }
 .sec-text{flex:1 1 420px}
 .sec-head h2{font-size:clamp(24px,4vw,42px);font-weight:800;letter-spacing:.06em;text-transform:uppercase;line-height:1.04}
-.sec-head p{max-width:56ch;margin-top:10px;font-size:14px;line-height:1.7;color:var(--grey)}
+.sec-head p{max-width:56ch;margin-top:12px;font-size:14px;line-height:1.8;color:var(--grey);text-wrap:pretty}
 
 .tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
 .sel{position:relative;min-width:290px}
@@ -142,28 +144,31 @@ body.launched .opened{display:block}
 select{
   width:100%;appearance:none;background:rgba(16,14,22,.92);color:var(--white);
   border:1px solid var(--line);border-radius:2px;padding:14px 42px 14px 15px;
-  font-family:var(--ui);font-size:14px;font-weight:500;cursor:pointer;
+  font-family:var(--ui);font-size:14px;font-weight:500;cursor:pointer;min-height:48px;
+  transition:border-color .2s,background .2s,box-shadow .2s;
 }
 select:hover{border-color:rgba(255,45,170,.4)}
+select:focus-visible{border-color:var(--pink);box-shadow:0 0 0 4px rgba(255,45,170,.09)}
 .sel .caret{position:absolute;right:15px;top:50%;transform:translateY(-50%);color:var(--pink);pointer-events:none;font-size:9px}
 .btn{
   display:inline-flex;align-items:center;background:transparent;color:var(--grey);
   border:1px solid var(--line);border-radius:2px;padding:14px 18px;cursor:pointer;
   font-family:var(--ui);font-size:10.5px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;
-  transition:border-color .18s,color .18s;
+  min-height:48px;transition:border-color .18s,color .18s,background .18s,transform .18s;
 }
-.btn:hover{border-color:rgba(255,45,170,.45);color:var(--white)}
+.btn:hover{border-color:rgba(255,45,170,.45);color:var(--white);background:rgba(255,45,170,.05)}
+.btn:active{transform:translateY(1px)}
 .btn[hidden]{display:none}
 
 /* board */
-.scroll{max-width:var(--max);margin:0 auto;overflow-x:auto}
+.scroll{max-width:var(--max);margin:0 auto;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:thin;scrollbar-color:#514356 var(--deep)}
 table{width:100%;border-collapse:collapse;min-width:760px;font-variant-numeric:tabular-nums}
 thead th{
   text-align:left;padding:0 16px 12px;white-space:nowrap;border-bottom:1px solid var(--line);
   font-size:10px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:var(--dim);
 }
 th.r,td.r{text-align:right}
-tbody tr{border-bottom:1px solid var(--line-2)}
+tbody tr{border-bottom:1px solid var(--line-2);transition:background .18s}
 tbody tr:hover{background:rgba(255,255,255,.03)}
 tbody tr.you{background:rgba(255,45,170,.09);box-shadow:inset 2px 0 0 var(--pink)}
 tbody tr.gone td{opacity:.5}
@@ -184,17 +189,18 @@ td.rem{font-weight:700;color:var(--white);font-size:15px}
 /* 320px lands 3 columns at the 1280 max-width and 2 on a tablet, without
    tipping to 4 on desktop and leaving a ragged last row of two. */
 .cards{max-width:var(--max);margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(320px,100%),1fr));gap:14px}
-.card{position:relative;overflow:hidden;border-radius:3px;border:1px solid var(--line);aspect-ratio:16/9;background:var(--deep)}
+.card{position:relative;overflow:hidden;border-radius:3px;border:1px solid var(--line);aspect-ratio:16/9;background:var(--deep);transition:border-color .3s,box-shadow .3s}
+.card:hover{border-color:rgba(255,45,170,.3);box-shadow:0 8px 28px rgba(0,0,0,.22)}
 .card img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .7s cubic-bezier(.2,.6,.2,1)}
 .card:hover img{transform:scale(1.05)}
 
 /* footer */
-footer{margin-top:clamp(56px,9vw,112px);border-top:1px solid var(--line);padding:clamp(32px,5vw,54px) var(--gut) 60px}
+footer{margin-top:clamp(56px,9vw,112px);border-top:1px solid var(--line);padding:clamp(32px,5vw,54px) var(--gut) max(104px,calc(84px + env(safe-area-inset-bottom)))}
 .foot{max-width:var(--max);margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px 48px}
 .foot h3{font-size:10px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:var(--dim);margin-bottom:9px}
 .foot p,.foot li{font-size:12.5px;line-height:1.75;color:var(--dim)}
 .foot ul{list-style:none;padding:0;margin:0}
-.foot a{color:var(--grey);border-bottom:1px solid var(--line)}
+.foot a{color:var(--grey);border-bottom:1px solid var(--line);transition:color .18s,border-color .18s}
 .foot a:hover{color:var(--pink)}
 .foot code{font-family:ui-monospace,Consolas,monospace;font-size:12px;color:var(--grey)}
 
@@ -337,7 +343,7 @@ body.finale-morphing .clock .seg:last-child{visibility:hidden}
 
 /* ============ RADIO LEONIDA ============ */
 .radio{
-  position:fixed;right:22px;bottom:22px;z-index:70;
+  position:fixed;right:max(22px,env(safe-area-inset-right));bottom:max(22px,env(safe-area-inset-bottom));z-index:70;
   width:min(370px,calc(100vw - 32px));
   background:rgba(10,9,14,.93);backdrop-filter:blur(20px);
   border:1px solid var(--line);border-radius:4px;
@@ -347,9 +353,10 @@ body.finale-morphing .clock .seg:last-child{visibility:hidden}
 .radio-head{
   display:flex;align-items:center;gap:11px;width:100%;
   padding:12px 14px;background:none;border:0;cursor:pointer;
-  font-family:var(--ui);color:var(--white);text-align:left;
+  font-family:var(--ui);color:var(--white);text-align:left;min-height:48px;transition:background .18s;
 }
 .radio-head:hover{background:rgba(255,255,255,.04)}
+.radio-head:focus-visible{outline-offset:-4px}
 .radio.open .radio-head{border-bottom:1px solid var(--line-2)}
 .eq{display:flex;gap:2px;align-items:flex-end;height:14px;flex:none}
 .eq i{width:2.5px;height:26%;background:var(--dim);border-radius:1px}
@@ -371,7 +378,7 @@ body.finale-morphing .clock .seg:last-child{visibility:hidden}
 .radio-body{display:none}
 .radio.open .radio-body{display:block}
 
-.radio-ctl{display:flex;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid var(--line-2)}
+.radio-ctl{display:flex;align-items:center;gap:8px;padding:12px 14px 4px}
 .rbtn{
   display:grid;place-items:center;width:34px;height:34px;flex:none;
   background:transparent;border:1px solid var(--line);border-radius:50%;
@@ -385,7 +392,17 @@ body.finale-morphing .clock .seg:last-child{visibility:hidden}
 .vol::-webkit-slider-thumb{appearance:none;width:12px;height:12px;border-radius:50%;background:var(--pink);cursor:pointer}
 .vol::-moz-range-thumb{width:12px;height:12px;border:0;border-radius:50%;background:var(--pink);cursor:pointer}
 
-.radio-list{max-height:290px;overflow-y:auto;overscroll-behavior:contain}
+.radio-seek{padding:0 14px 12px;border-bottom:1px solid var(--line-2)}
+.seek{display:block;width:100%;height:24px;margin:0;appearance:none;background:transparent;cursor:pointer;--seek-progress:0%}
+.seek::-webkit-slider-runnable-track{height:3px;border-radius:2px;background:linear-gradient(to right,var(--pink) var(--seek-progress),rgba(255,255,255,.16) var(--seek-progress))}
+.seek::-moz-range-track{height:3px;border-radius:2px;background:rgba(255,255,255,.16)}
+.seek::-moz-range-progress{height:3px;border-radius:2px;background:var(--pink)}
+.seek::-webkit-slider-thumb{appearance:none;width:12px;height:12px;margin-top:-4.5px;border-radius:50%;background:var(--pink)}
+.seek::-moz-range-thumb{width:12px;height:12px;border:0;border-radius:50%;background:var(--pink)}
+.seek:disabled{opacity:.4;cursor:default}
+.radio-time{display:flex;justify-content:space-between;gap:12px;font-size:10px;line-height:1.2;color:var(--grey);font-variant-numeric:tabular-nums}
+
+.radio-list{max-height:min(290px,calc(100dvh - 210px));overflow-y:auto;overscroll-behavior:contain}
 .radio-list h4{
   position:sticky;top:0;background:rgba(10,9,14,.97);margin:0;
   padding:11px 14px 6px;font-size:9px;font-weight:800;
@@ -393,7 +410,7 @@ body.finale-morphing .clock .seg:last-child{visibility:hidden}
 }
 .trk{
   display:flex;align-items:baseline;gap:9px;width:100%;
-  padding:8px 14px;background:none;border:0;cursor:pointer;
+  padding:10px 14px;background:none;border:0;cursor:pointer;min-height:44px;transition:background .18s,color .18s;
   font-family:var(--ui);text-align:left;color:var(--grey);font-size:12.5px;line-height:1.35;
 }
 .trk:hover{background:rgba(255,255,255,.05);color:var(--white)}
@@ -409,8 +426,9 @@ body.finale-morphing .clock .seg:last-child{visibility:hidden}
 @media (max-width:560px){
   .clock{grid-template-columns:repeat(2,1fr);gap:26px 10px}
   .sel{min-width:0;flex:1 1 220px}
-  .radio{right:12px;left:12px;bottom:12px;width:auto}
-  .radio-list{max-height:210px}
+  .radio{right:max(12px,env(safe-area-inset-right));left:max(12px,env(safe-area-inset-left));bottom:max(12px,env(safe-area-inset-bottom));width:auto}
+  select{font-size:16px}
+  .radio-list{max-height:min(210px,calc(100dvh - 180px))}
 }
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
@@ -438,7 +456,7 @@ body.finale-morphing .clock .seg:last-child{visibility:hidden}
 
     <p class="street">Thursday, November 19, 2026</p>
 
-    <div class="clock">
+    <div class="clock" role="timer" aria-live="off">
       <div class="seg" id="s-d"><span class="n" id="v-d">00</span><span class="l">Days</span></div>
       <div class="seg" id="s-h"><span class="n" id="v-h">00</span><span class="l">Hours</span></div>
       <div class="seg" id="s-m"><span class="n" id="v-m">00</span><span class="l">Minutes</span></div>
@@ -465,10 +483,10 @@ body.finale-morphing .clock .seg:last-child{visibility:hidden}
       <button class="btn" id="auto" type="button" hidden>Use my location</button>
     </div>
   </div>
-  <div class="scroll">
+  <div class="scroll" role="region" aria-label="Launch waves table" tabindex="0">
     <table>
       <thead><tr>
-        <th>Offset at launch</th><th>Regions</th><th>Unlocks (UTC)</th><th class="r">Time remaining</th><th class="r">Status</th>
+        <th title="Timezone offset on 19 November, including daylight-saving changes">Offset at launch</th><th>Regions</th><th>Unlocks (UTC)</th><th class="r">Time remaining</th><th class="r">Status</th>
       </tr></thead>
       <tbody id="feed"></tbody>
     </table>
@@ -555,6 +573,10 @@ body.finale-morphing .clock .seg:last-child{visibility:hidden}
       <button class="rbtn" id="rShuf" type="button" title="Shuffle" aria-label="Shuffle" aria-pressed="false">&#8644;</button>
       <input class="vol" id="rVol" type="range" min="0" max="1" step="0.01" value="0.7" aria-label="Volume">
     </div>
+    <div class="radio-seek">
+      <input class="seek" id="rSeek" type="range" min="0" max="0" step="0.1" value="0" aria-label="Seek through song" aria-valuetext="No song loaded" disabled>
+      <div class="radio-time"><span id="rElapsed">0:00</span><span id="rDuration">--:--</span></div>
+    </div>
     <div class="radio-list" id="radioList"></div>
   </div>
   <audio id="radioAudio" preload="none"></audio>
@@ -619,12 +641,14 @@ var REGIONS = [
 var STORE = 'gta6-region';
 
 /* ---------- timezone maths -------------------------------------------- */
+var zoneFormatters = new Map();
 function partsIn(tz, date){
-  var f = new Intl.DateTimeFormat('en-US', {
+  if (!zoneFormatters.has(tz)) zoneFormatters.set(tz, new Intl.DateTimeFormat('en-US', {
     timeZone: tz, hourCycle: 'h23',
     year:'numeric', month:'2-digit', day:'2-digit',
     hour:'2-digit', minute:'2-digit', second:'2-digit'
-  }).formatToParts(date);
+  }));
+  var f = zoneFormatters.get(tz).formatToParts(date);
   var o = {};
   for (var i = 0; i < f.length; i++) if (f[i].type !== 'literal') o[f[i].type] = +f[i].value;
   return o;
@@ -754,6 +778,8 @@ var vD = document.getElementById('v-d'), vH = document.getElementById('v-h'),
     sD = document.getElementById('s-d'), sH = document.getElementById('s-h'),
     sM = document.getElementById('s-m'), sS = document.getElementById('s-s');
 var seen = {};
+var lastClockTick = null;
+var clock = document.querySelector('.clock');
 
 function setSeg(box, el, val){
   if (seen[el.id] === val) return;
@@ -767,6 +793,11 @@ function setSeg(box, el, val){
 function paintStatic(){
   sel.value = current.tz;
   autoBtn.hidden = (current === home);
+  var timing = 'Midnight on 19 November 2026 in ' + current.city + ' (' + current.off + ' at launch). Daylight-saving clock changes are included in the time remaining.';
+  sel.title = timing;
+  clock.title = timing;
+  clock.setAttribute('aria-label', 'Countdown to ' + timing);
+  lastClockTick = null;
   paintBoard();
 }
 paintStatic();
@@ -775,6 +806,13 @@ function frame(){
   var now = nowMs();
   var diff = current.at - now;
   var launched = diff <= 0;
+  var tick = String(launched) + ':' + Math.floor(Math.abs(diff) / 1000);
+  if (tick === lastClockTick){
+    if (window.finaleTick) window.finaleTick(now);
+    requestAnimationFrame(frame);
+    return;
+  }
+  lastClockTick = tick;
   document.body.classList.toggle('launched', launched);
 
   var t = split(launched ? now - current.at : diff);
@@ -791,6 +829,7 @@ function frame(){
       row.pill.textContent = 'Playing';
       row.tr.classList.add('gone');
     } else {
+      row.tr.classList.remove('gone');
       var q = split(dd);
       row.rem.textContent = q.d + 'd ' + pad(q.h) + ':' + pad(q.m) + ':' + pad(q.s);
       if (dd < 3600000){ row.pill.className = 'pill s'; row.pill.textContent = 'Final hour'; }
@@ -883,9 +922,51 @@ var TRACKS = [
       bPrev = document.getElementById('rPrev'),
       bNext = document.getElementById('rNext'),
       bShuf = document.getElementById('rShuf'),
-      vol   = document.getElementById('rVol');
+      vol   = document.getElementById('rVol'),
+      seek  = document.getElementById('rSeek'),
+      elapsed = document.getElementById('rElapsed'),
+      duration = document.getElementById('rDuration');
 
   var idx = -1, shuffle = false, btns = [];
+  var scrubbing = false;
+
+  function trackTime(seconds){
+    seconds = Math.max(0, Math.floor(seconds));
+    return Math.floor(seconds / 60) + ':' + pad(seconds % 60);
+  }
+  function resetProgress(){
+    scrubbing = false;
+    seek.disabled = true;
+    seek.max = '0';
+    seek.value = '0';
+    seek.style.setProperty('--seek-progress', '0%');
+    seek.setAttribute('aria-valuetext', 'No song loaded');
+    elapsed.textContent = '0:00';
+    duration.textContent = '--:--';
+  }
+  function updateProgress(){
+    var length = audio.duration;
+    if (!Number.isFinite(length) || length <= 0){ resetProgress(); return; }
+    seek.disabled = false;
+    seek.max = String(length);
+    var position = Math.max(0, Math.min(length, scrubbing ? +seek.value : audio.currentTime || 0));
+    if (!scrubbing) seek.value = String(position);
+    seek.style.setProperty('--seek-progress', (position / length * 100) + '%');
+    elapsed.textContent = trackTime(position);
+    duration.textContent = trackTime(length);
+    seek.setAttribute('aria-valuetext', trackTime(position) + ' of ' + trackTime(length));
+  }
+  seek.addEventListener('pointerdown', function(){ if (!seek.disabled) scrubbing = true; });
+  seek.addEventListener('input', function(){
+    if (seek.disabled || !Number.isFinite(audio.duration) || audio.duration <= 0) return;
+    var position = Math.max(0, Math.min(audio.duration, +seek.value));
+    try { audio.currentTime = position; } catch (e) { return; }
+    updateProgress();
+  });
+  function finishScrubbing(){ scrubbing = false; updateProgress(); }
+  ['change', 'pointerup', 'pointercancel', 'blur'].forEach(function(event){ seek.addEventListener(event, finishScrubbing); });
+  ['loadedmetadata', 'durationchange', 'timeupdate', 'seeking', 'seeked'].forEach(function(event){ audio.addEventListener(event, updateProgress); });
+  audio.addEventListener('emptied', resetProgress);
 
   /* ---- build the list, grouped by where the track showed up ---- */
   var seenGroup = null;
@@ -918,6 +999,7 @@ var TRACKS = [
     if (i < 0 || i >= TRACKS.length) return;
     idx = i;
     mark();
+    resetProgress();
     audio.src = 'assets/radio/' + TRACKS[i].f;
     now.textContent = label(i);
     var p = audio.play();
@@ -943,6 +1025,7 @@ var TRACKS = [
   }
 
   audio.addEventListener('error', function(){
+    resetProgress();
     if (idx < 0) return;
     btns[idx].classList.add('missing');
     box.classList.remove('playing');
