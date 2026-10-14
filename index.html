@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="Countdown to the release of Grand Theft Auto VI on Thursday 19 November 2026, unlocking at midnight local time in every region.">
+<meta name="theme-color" content="#08080A">
 <title>Countdown to Vice City</title>
 <link rel="icon" href="assets/favicon.png" type="image/png">
 <link rel="preload" as="image" href="assets/logo.webp">
@@ -254,6 +255,8 @@ body.finale-morphing .clock .seg:last-child{visibility:hidden}
   opacity:0;transition:opacity 1.15s ease;
 }
 .fin-img.on{opacity:1;animation:finkb 6s cubic-bezier(.15,.45,.4,1) forwards}
+.fin-art.mid .fin-img{transition-duration:.7s}
+.fin-art.mid .fin-img.on{animation-duration:3s}
 .fin-art.fast .fin-img{transition-duration:.38s}
 .fin-art.fast .fin-img.on{animation-duration:1.2s}
 @keyframes finkb{from{transform:scale(1.065)}to{transform:scale(1)}}
@@ -421,6 +424,8 @@ body.finale-morphing .clock .seg:last-child{visibility:hidden}
 .trk[aria-current="true"]{background:rgba(255,45,170,.11)}
 .trk[aria-current="true"] .ti b{color:var(--pink)}
 .trk.missing{opacity:.42}
+.trk:disabled{cursor:default}
+.trk:disabled:hover{background:none;color:var(--grey)}
 
 
 @media (max-width:560px){
@@ -880,9 +885,9 @@ requestAnimationFrame(frame);
 /* ==================================================================
    RADIO LEONIDA
    The 21 tracks Rockstar has actually shown so far: 7 across the
-   two trailers, 14 in the Extended Look. Metadata only: no audio ships
-   with this project. Drop your own files in assets/radio/ under the
-   filenames below and they light up. See assets/radio/README.md.
+   two trailers, 14 in the Extended Look. A track with no `f` has no
+   audio file in assets/radio/ yet: it's listed but can't be picked.
+   Add the file and its `f` and it lights up.
    ================================================================== */
 var TRACKS = [
   /* Trailer 1, December 2023 */
@@ -893,9 +898,9 @@ var TRACKS = [
   { g:'Trailer 2', a:'Zenglen',                t:'Child Support',                          y:2004, f:'zenglen-child-support.mp3' },
   { g:'Trailer 2', a:'Wang Chung',             t:'Everybody Have Fun Tonight',             y:1986, f:'wang-chung-everybody-have-fun-tonight.mp3' },
   { g:'Trailer 2', a:'Tammy Wynette',          t:"Talkin' to Myself Again",                y:1987, f:'tammy-wynette-talkin-to-myself-again.mp3' },
-  { g:'Trailer 2', a:'The Arrows',             t:"I Love Rock 'n' Roll",                   y:1975, f:'the-arrows-i-love-rock-n-roll.mp3' },
+  { g:'Trailer 2', a:'The Arrows',             t:"I Love Rock 'n' Roll",                   y:1975 },
   /* Extended Look, August 2026 */
-  { g:'Extended Look', a:'Kodak Black',                t:'Skrilla',                            y:2015, f:'kodak-black-skrilla.mp3' },
+  { g:'Extended Look', a:'Kodak Black',                t:'Skrilla',                            y:2015 },
   { g:'Extended Look', a:'Def Leppard',                t:'Love Bites',                         y:1987, f:'def-leppard-love-bites.mp3' },
   { g:'Extended Look', a:'Cliff Richard',              t:'Devil Woman',                        y:1976, f:'cliff-richard-devil-woman.mp3' },
   { g:'Extended Look', a:'Phil Collins',               t:'Against All Odds (Take a Look at Me Now)', y:1984, f:'phil-collins-against-all-odds.mp3' },
@@ -905,7 +910,7 @@ var TRACKS = [
   { g:'Extended Look', a:'Chimbala & Omega',           t:'Se Me Nota (Agarrame)',              y:2021, f:'chimbala-omega-se-me-nota.mp3' },
   { g:'Extended Look', a:'Depeche Mode',               t:'People Are People',                  y:1984, f:'depeche-mode-people-are-people.mp3' },
   { g:'Extended Look', a:'Birdman feat. Lil Wayne',    t:'Pop Bottles',                        y:2006, f:'birdman-pop-bottles.mp3' },
-  { g:'Extended Look', a:'Sexyy Red & Tay Keith',      t:'Pound Town',                         y:2023, f:'sexyy-red-pound-town.mp3' },
+  { g:'Extended Look', a:'Sexyy Red & Tay Keith',      t:'Pound Town',                         y:2023 },
   { g:'Extended Look', a:'Elderbrook & Bob Moses',     t:'Inner Light',                        y:2021, f:'elderbrook-bob-moses-inner-light.mp3' },
   { g:'Extended Look', a:'The Bellamy Brothers',       t:'Let Your Love Flow',                 y:1976, f:'bellamy-brothers-let-your-love-flow.mp3' },
   { g:'Extended Look', a:'Captain & Tennille',         t:"But I Think It's a Dream",           y:1980, f:'captain-tennille-but-i-think-its-a-dream.mp3' }
@@ -983,6 +988,12 @@ var TRACKS = [
     b.innerHTML = '<span class="ti"><b></b><span></span></span><span class="yr">' + tr.y + '</span>';
     b.querySelector('b').textContent = tr.t;
     b.querySelector('.ti span').textContent = tr.a;
+    if (!tr.f){
+      b.classList.add('missing');
+      b.disabled = true;
+      b.title = 'Not on the radio yet';
+      b.querySelector('.ti span').textContent = tr.a + ' · not on the radio yet';
+    }
     b.addEventListener('click', function(){ play(i); });
     list.appendChild(b);
     btns[i] = b;
@@ -996,7 +1007,7 @@ var TRACKS = [
 
   /* ---- playback ---- */
   function play(i){
-    if (i < 0 || i >= TRACKS.length) return;
+    if (i < 0 || i >= TRACKS.length || !TRACKS[i].f) return;
     idx = i;
     mark();
     resetProgress();
@@ -1106,7 +1117,7 @@ var TRACKS = [
 /* ==================================================================
    FINALE
    Takes over the last 60 seconds of the selected region's countdown:
-   artwork slideshow and a big neon seconds counter, then the trailer 1
+   a Vice City montage that closes in on Jason and Lucia, a big neon seconds counter, then the trailer 1
    logo reveal over the final 6s, landing on OUT NOW at zero.
 
    The song runs continuously underneath. Cross-correlating trailer 1's
@@ -1120,49 +1131,64 @@ var TRACKS = [
       SONG_REVEAL = 224.64, /* reveal's first frame in the track; master soundtrack offset +146.11s */
       SONG_AT_ZERO = SONG_REVEAL + REVEAL_LEN,
       HOLD_AFTER = 600;     /* arrive within 10 min of launch and you still get OUT NOW */
-  var ARTWORKS = [];
-  for (var a = 1; a <= 11; a++) ARTWORKS.push('assets/finale/art' + (a < 10 ? '0' : '') + a + '.webp');
-  var SCREENSHOTS = [
-    'vice-city-01','vice-city-03','vice-city-06','vice-city-08',
-    'leonida-keys-01','leonida-keys-03','leonida-keys-05',
-    'port-gellhorn-01','port-gellhorn-03','port-gellhorn-05',
-    'ambrosia-01','ambrosia-03','ambrosia-05','grassrivers-01','grassrivers-03',
-    'mount-kalaga-national-park-01','mount-kalaga-national-park-03',
-    'jason-duval-01','jason-duval-04','jason-duval-06',
-    'lucia-caminos-01','lucia-caminos-03','lucia-caminos-05',
-    'cal-hampton-01','boobie-ike-02','real-dimez-01','raul-bautista-02','brian-heder-03'
-  ].map(function(name){ return 'assets/finale/screens/' + name + '.webp'; });
-  var ART = ARTWORKS.concat(SCREENSHOTS), ART_COUNT = ART.length, SLOW, FAST;
+  /* The montage is told in three acts, 27 shots, speeding up as it goes:
+       60s to 33s  nine shots at 3s   Vice City, with the pair glimpsed twice
+       33s to 15s  nine shots at 2s   the city at dusk, Jason and Lucia in it
+       15s to  6s  nine shots at 1s   nothing but Jason and Lucia
+     Each act is reshuffled per visit, but the pinned shots hold their
+     places: the Vice City sign opens it, and the last two seconds before
+     the logo reveal are always the kiss, then the pair face to camera. */
+  function shot(name){ return 'assets/finale/' + (/^art\d/.test(name) ? '' : 'screens/') + name + '.webp'; }
+  var ACT_CITY  = ['vice-city-02','vice-city-03','vice-city-05','vice-city-06','vice-city-09','vice-city-10'],
+      ACT_CITY_GLIMPSE = ['jason-duval-04','art03'],         /* both on Ocean Drive */
+      ACT_DUSK_CITY = ['vice-city-11','vice-city-08'],
+      ACT_DUSK_SOLO = ['lucia-caminos-02','jason-duval-05','lucia-caminos-06','lucia-caminos-10'],
+      ACT_DUSK_PAIR = ['jason-lucia-03','jason-lucia-09','jason-lucia-10','art11'],  /* three of four per visit */
+      ACT_PAIR  = ['jason-lucia-02','jason-lucia-04','jason-lucia-06','jason-lucia-08',
+                   'jason-lucia-11','jason-lucia-12','art01','art05','art10'],
+      OPENER = 'vice-city-01', CLOSERS = ['jason-lucia-13','jason-lucia-01'],
+      STILL = 'jason-lucia-01';                               /* reduced motion: one frame */
+  var NAMES = [OPENER].concat(ACT_CITY, ACT_CITY_GLIMPSE, ACT_DUSK_CITY, ACT_DUSK_SOLO, ACT_DUSK_PAIR, ACT_PAIR, CLOSERS)
+    .filter(function(n, i, all){ return all.indexOf(n) === i; });
+  var ART = NAMES.map(shot), ART_COUNT = ART.length, SEQ;
   var FOCAL = {
-    'art02':'65% center', 'art06':'68% center', 'art07':'40% center',
-    'art08':'57% center', 'art09':'70% center', 'art11':'57% center',
-    'cal-hampton-01':'75% center', 'boobie-ike-02':'38% center',
-    'jason-duval-01':'65% center', 'jason-duval-06':'58% center',
-    'lucia-caminos-01':'38% center', 'lucia-caminos-03':'58% center',
-    'lucia-caminos-05':'65% center', 'real-dimez-01':'74% center',
-    'port-gellhorn-03':'35% center', 'grassrivers-01':'62% center'
+    'art01':'62% center', 'art03':'55% center', 'art11':'57% center',
+    'jason-duval-04':'72% center', 'jason-duval-05':'30% center',
+    'jason-lucia-01':'40% center', 'jason-lucia-03':'55% center', 'jason-lucia-06':'65% center',
+    'jason-lucia-09':'55% center', 'jason-lucia-10':'35% center', 'jason-lucia-11':'62% center',
+    'jason-lucia-12':'68% center', 'jason-lucia-13':'45% center', 'vice-city-02':'70% center'
   };
+  /* where each act's shots start, measured in seconds since the takeover began */
+  var TIERS = [{ at: 0, len: 3, n: 9, cls: '' }, { at: 27, len: 2, n: 9, cls: 'mid' }, { at: 45, len: 1, n: 9, cls: 'fast' }];
 
-  function shuffledIndices(start, end){
-    var order = [];
-    for (var i = start; i < end; i++) order.push(i);
+  function shuffled(list){
+    var order = list.slice();
     for (var j = order.length - 1; j > 0; j--){
       var pick = Math.floor(Math.random() * (j + 1)), swap = order[j];
       order[j] = order[pick]; order[pick] = swap;
     }
     return order;
   }
-
   function prepareMontage(){
-    var artwork = shuffledIndices(0, ARTWORKS.length);
-    var screenshots = shuffledIndices(ARTWORKS.length, ART_COUNT);
-    SLOW = [];
-    /* Fifteen shots at 3s each, alternating artwork with the wider world.
-       The final nine shots are fresh screenshots, with no repeats. */
-    for (var i = 0; i < 15; i++) SLOW.push(i % 3 === 0 ? artwork.shift() : screenshots.shift());
-    FAST = screenshots.slice(0, 9);
+    var city = shuffled(ACT_CITY), glimpse = shuffled(ACT_CITY_GLIMPSE);
+    /* the pair turn up mid-act and late in the act, never back to back */
+    var act1 = [OPENER].concat(city.slice(0, 3), glimpse[0], city.slice(3, 5), glimpse[1], city[5]);
+    var dc = shuffled(ACT_DUSK_CITY), solo = shuffled(ACT_DUSK_SOLO), pair = shuffled(ACT_DUSK_PAIR);
+    /* city, then one of them, then both: the balance tips towards the pair */
+    var act2 = [dc[0], solo[0], solo[1], dc[1], solo[2], pair[0], solo[3], pair[1], pair[2]];
+    var act3 = shuffled(ACT_PAIR).slice(0, 7).concat(CLOSERS);
+    SEQ = act1.concat(act2, act3).map(function(n){ return NAMES.indexOf(n); });
   }
   prepareMontage();
+  /* which shot, and how fast to cut, at r seconds before launch */
+  function montageAt(r){
+    var t = Math.max(0, FIN_LEN - r), base = 0;
+    for (var k = 0; k < TIERS.length; k++){
+      var tier = TIERS[k], next = TIERS[k + 1];
+      if (!next || t < next.at) return { idx: SEQ[Math.min(SEQ.length - 1, base + Math.min(tier.n - 1, Math.floor((t - tier.at) / tier.len)))], cls: tier.cls };
+      base += tier.n;
+    }
+  }
 
   var el = document.getElementById('finale'),
       artBox = document.getElementById('finArt'),
@@ -1208,7 +1234,7 @@ var TRACKS = [
     if (loaded) return;
     loaded = true;
     imgs.forEach(function(d, i){
-      if (!reducedMotion.matches || i === SLOW[0]) loadArt(i);
+      if (!reducedMotion.matches || i === NAMES.indexOf(STILL)) loadArt(i);
     });
     still.src = still.getAttribute('data-src');
     video.poster = still.src;
@@ -1373,11 +1399,10 @@ var TRACKS = [
       if (!lastAnnouncement || n === 60 || n === 30 || n === 15 || n === 10){
         announce(n + ' seconds to Grand Theft Auto VI in ' + current.city + '.');
       }
-      var fast = r <= 15 && !reducedMotion.matches;
-      artBox.classList.toggle('fast', fast);
-      showArt(reducedMotion.matches ? SLOW[0] : fast
-        ? FAST[Math.min(FAST.length - 1, Math.max(0, Math.floor(15 - r)))]
-        : SLOW[Math.min(SLOW.length - 1, Math.floor((FIN_LEN - r) / 3))]);
+      var m = reducedMotion.matches ? { idx: NAMES.indexOf(STILL), cls: '' } : montageAt(r);
+      artBox.classList.toggle('mid', m.cls === 'mid');
+      artBox.classList.toggle('fast', m.cls === 'fast');
+      showArt(m.idx);
     }
 
     /* the clip's position is derived from the clock every frame, so joining
