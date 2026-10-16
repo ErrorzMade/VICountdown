@@ -383,9 +383,11 @@ body.finale-morphing .clock .seg:last-child{visibility:hidden}
 .station-button:hover img,.station-button[aria-pressed="true"] img{opacity:1}
 .station-button[aria-pressed="true"]{border-color:var(--station);background:rgba(255,255,255,.09);box-shadow:0 0 0 1px rgba(0,0,0,.3)}
 .station-button:focus-visible{outline-offset:2px}
-.archive-stations{display:flex;gap:6px;padding:16px 18px 18px}
-.archive-button{flex:1;min-height:52px;padding:8px 5px;border:1px solid var(--line-2);border-radius:7px;background:rgba(255,255,255,.025);color:var(--grey);font:500 11px var(--ui);cursor:pointer}
-.archive-button[aria-pressed="true"]{border-color:var(--station);color:var(--white);background:rgba(255,255,255,.065)}
+.archive-stations{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;padding:16px 18px 18px}
+.archive-stations .archive-button{display:flex;flex-direction:column;gap:7px;aspect-ratio:auto;height:auto;padding:4px}
+.archive-stations .archive-button img{width:100%;height:auto;aspect-ratio:1}
+.archive-caption{display:block;padding:0 1px 3px;font:500 10px/1.25 var(--ui);color:var(--grey);text-align:center}
+.archive-button[aria-pressed="true"] .archive-caption{color:var(--white)}
 @media(max-width:350px){
   .station-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding-top:12px;padding-bottom:14px}
   .station-button{aspect-ratio:auto;height:59px;padding:4px}
@@ -956,10 +958,10 @@ var STATIONS = [
   {name:'Afro Bank FM', logo:'afrobankfm.avif', description:'Afrobeats, highlife & dance.', color:'#79cfa0'},
   {name:'Back Country Radio', logo:'backcountryradio.avif', description:'Country legends & outlaw stories.', color:'#92b5ed'},
   {name:'Cocoteo FM', logo:'cocoteoFM.avif', description:'Reggaeton, dembow & bachata.', color:'#f793d3'},
-  {name:'Trailer 1', description:'The first ride into Vice City.', color:'#ff83c8', archive:true},
-  {name:'Trailer 2', description:'The sounds of Jason & Lucia.', color:'#ff83c8', archive:true},
-  {name:'Extended Look', description:'More sounds from the world of Leonida.', color:'#ff83c8', archive:true},
-  {name:'Launch Trailer', color:'#ff83c8', archive:true}
+  {name:'Trailer 1', logo:'trailer-1.webp', description:'The first ride into Vice City.', color:'#ff83c8', archive:true},
+  {name:'Trailer 2', logo:'trailer-2.webp', description:'The sounds of Jason & Lucia.', color:'#ff83c8', archive:true},
+  {name:'Extended Look', logo:'extended-look.webp', description:'More sounds from the world of Leonida.', color:'#ff83c8', archive:true},
+  {name:'Launch Trailer', logo:'launch-trailer.webp', color:'#ff83c8', archive:true}
 ];
 
 (function(){
@@ -1050,11 +1052,12 @@ var STATIONS = [
     if(wasPlaying)step(1);
   }
   STATIONS.forEach(function(station,i){
-    var b=document.createElement('button');b.type='button';b.className=station.archive?'archive-button':'station-button';
+    var b=document.createElement('button');b.type='button';b.className=station.archive?'station-button archive-button':'station-button';
     b.setAttribute('aria-pressed','false');b.setAttribute('aria-label','Tune to '+station.name);b.title=station.name;
     if(station.logo){
       var img=document.createElement('img');img.src='assets/radio images/'+station.logo;img.alt='';img.width=52;img.height=52;b.appendChild(img);
     }else b.textContent=station.name;
+    if(station.archive){var caption=document.createElement('span');caption.className='archive-caption';caption.textContent=station.name;b.appendChild(caption);}
     b.addEventListener('click',function(){selectStation(i);});(station.archive?archives:stationGrid).appendChild(b);stationBtns.push(b);
   });
   stationMode.addEventListener('click',function(){selectStation(rememberedStation);});
